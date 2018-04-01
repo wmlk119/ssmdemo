@@ -1,0 +1,115 @@
+﻿<!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>用户管理</title>
+
+	<link href="../../plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
+	<link href="../../plugins/material-design-iconic-font-2.2.0/css/material-design-iconic-font.min.css" rel="stylesheet"/>
+	<link href="../../plugins/bootstrap-table-1.11.0/bootstrap-table.min.css" rel="stylesheet"/>
+	<link href="../../plugins/waves-0.7.5/waves.min.css" rel="stylesheet"/>
+	<!--<link href="../../plugins/jquery-confirm/jquery-confirm.min.css" rel="stylesheet"/>-->
+	<!--<link href="../../plugins/select2/css/select2.min.css" rel="stylesheet"/>-->
+	<link rel="stylesheet" href="../../plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css"/>
+	<link href="../../css/common.css" rel="stylesheet"/>
+</head>
+<body>
+<div id="main">
+	<div id="toolbar">
+		<a id="add_user" class="waves-effect waves-button" href="javascript:;" ><i class="zmdi zmdi-plus"></i>新增用户</a>
+		<label>用户名：</label><input id="suser_name" class="mr10 input-search" type="text"/>
+		<label>登录名：</label><input id="slogin_name" class="mr10 input-search" type="text" />
+		<label>用户状态：</label>
+		<select id="senbale_stat">
+			<option value="">是否有效</option>
+			<option value="1">是</option>
+			<option value="0">否</option>
+		</select>
+		<button id="crud_search" type="button" class="btn btn-default btn-sm ml50">查询</button>
+	</div>
+
+	<table id="table"></table>
+</div>
+<!-- 新增 -->
+<div id="userinfo" class="col-xs-8" style="padding: 20px 10px 10px 50px;" hidden>
+	<div class="form-item blk-title" >
+		<span>新增用户</span>
+	</div>
+	<div class="form-item">
+		<label class="form-label">登录名：</label>
+		<input id="login_name" class="input-search2" type="text" placeholder="请使用英文字母、数字和'_'，长度不超过32">
+		<span class="red">*</span>
+	</div>
+	<div class="form-item">
+		<label class="form-label">登录密码：</label>
+		<input class="input-search2" type="text" value="000000" disabled>
+	</div>
+	<div class="form-item">
+		<label class="form-label">用户名：</label>
+		<input id="user_name" class="input-search2" type="text" placeholder="长度不超过32">
+		<span class="red">*</span>
+	</div>
+	<div class="form-item">
+		<label class="form-label">性别：</label>
+		<div class="radio" style="display: inline;margin-right: 5px;">
+			<input name="sex" type="radio" id="sex_male" value="1" checked>
+			<label for="sex_male">
+				男
+			</label>
+		</div>
+		<div class="radio" style="display: inline">
+			<input name="sex" type="radio" id="sex_female" value="0">
+			<label for="sex_female">
+				女
+			</label>
+		</div>
+	</div>
+	<div class="form-item">
+		<label class="form-label">联系电话：</label>
+		<input id="phone_num" class="input-search2" type="text" placeholder="格式为13812345678或051688886666">
+		<span class="red">*</span>
+	</div>
+	<div class="form-item">
+		<label class="form-label">所属区县：</label>
+		<select id="district_code">
+			<option value="1">市区</option>
+			<option value="2">铜山区</option>
+			<option value="3">贾汪区</option>
+			<option value="4">丰县</option>
+			<option value="5">沛县</option>
+			<option value="6">睢宁县</option>
+			<option value="7">邳州市</option>
+			<option value="8">新沂市</option>
+		</select>
+	</div>
+	<div class="form-item">
+		<label class="form-label">角色：</label>
+		<select id="role_id">
+			<option value="">管理员</option>
+			<option>测试一</option>
+		</select>
+	</div>
+	<div class="form-item">
+		<label class="form-label">备注：</label>
+		<textarea id="remark" class="form-txtarea"></textarea>
+	</div>
+	<div class="form-item2 col-xs-7" style="text-align: center;">
+		<button id="doAddUser" type="button" class="btn btn-info btn-sm btn-margin">新增</button>
+		<button id="cancelAddUser" type="button" class="btn btn-default btn-sm btn-margin">取消</button>
+	</div>
+</div>
+</body>
+<script src="../../plugins/jquery.1.12.4.min.js"></script>
+<script src="../../plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+<script src="../../plugins/bootstrap-table-1.11.0/bootstrap-table.min.js"></script>
+<script src="../../plugins/bootstrap-table-1.11.0/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="../../plugins/waves-0.7.5/waves.min.js"></script>
+<!--<script src="../../plugins/jquery-confirm/jquery-confirm.min.js"></script>-->
+<!--<script src="../../plugins/select2/js/select2.min.js"></script>-->
+<script src="../../plugins/layer/layer.js"></script>
+<script src="../../js/utils.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/base/userlist.js"></script>
+</html>

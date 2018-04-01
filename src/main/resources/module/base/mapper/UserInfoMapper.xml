@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.archer.ssm.module.base.mapper.UserInfoMapper" >
+
+    <!-- 根据ID查询 -->
+    <select id="getById" parameterType="java.lang.Long" resultType="com.archer.ssm.module.base.pojo.UserInfo">
+        SELECT * FROM user_info WHERE userId = #{id}
+    </select>
+
+    <!-- 新增 -->
+    <insert id="add" parameterType="com.archer.ssm.module.base.pojo.UserInfo">
+        INSERT INTO user_info (userId,loginName,loginPwd,pwdSalt,userName,sex,phoneNum,districtCode,roleId,isEnable,createTime,remark)
+        VALUES (#{userId},#{loginName},#{loginPwd},#{pwdSalt},#{userName},#{sex},#{phoneNum},#{districtCode},#{roleId},#{isEnable},#{createTime},#{remark})
+    </insert>
+
+    <!-- 根据ID删除 -->
+
+
+    <!-- 修改 -->
+
+
+    <!-- 查询条数 -->
+    <select id="getCount" parameterType="com.archer.ssm.module.base.pojo.UserInfo" resultType="java.lang.Integer">
+        SELECT count(1) from user_info WHERE 1=1
+        <if test="userName != null">
+          AND userName LIKE '%'+ #{userName} +'%'
+        </if>
+        <if test="loginName != null">
+            AND loginName LIKE '%'+ #{loginName} +'%'
+        </if>
+        <if test="isEnable != null">
+            AND isEnable = #{isEnable}
+        </if>
+    </select>
+
+    <!-- 分页条件查询 -->
+    <select id="getPageList" resultType="com.archer.ssm.module.base.pojo.UserInfo">
+        SELECT TOP ${pageSize} * FROM (
+        SELECT ROW_NUMBER() OVER (ORDER BY createTime DESC ) AS rownumber,* FROM user_info
+        WHERE 1=1
+        <if test="entity.userName != null">
+            AND userName LIKE '%'+ #{entity.userName} +'%'
+        </if>
+        <if test="entity.loginName != null">
+            AND loginName LIKE '%'+ #{entity.loginName} +'%'
+        </if>
+        <if test="entity.isEnable != null">
+            AND isEnable = #{entity.isEnable}
+        </if>
+        ) AS a WHERE rownumber > #{offset}
+    </select>
+
+    <!-- 根据条件查询用户 -->
+    <select id="getByCondition" parameterType="com.archer.ssm.module.base.pojo.UserInfo" resultType="com.archer.ssm.module.base.pojo.UserInfo">
+        SELECT * from user_info WHERE 1=1 AND isEnable =1
+        <if test="loginName != null">
+            AND loginName = #{loginName}
+        </if>
+        <if test="districtCode != null">
+            AND districtCode = #{districtCode}
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,78 @@
+﻿<!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>角色管理</title>
+
+	<link href="../../plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
+	<link href="../../plugins/material-design-iconic-font-2.2.0/css/material-design-iconic-font.min.css" rel="stylesheet"/>
+	<link href="../../plugins/bootstrap-table-1.11.0/bootstrap-table.min.css" rel="stylesheet"/>
+	<link href="../../plugins/waves-0.7.5/waves.min.css" rel="stylesheet"/>
+	<link href="../../plugins/jquery-confirm/jquery-confirm.min.css" rel="stylesheet"/>
+	<!-- ztree -->
+	<link href="../../plugins/zTree_v3/css/zTreeStyle/zTreeStyle.css" rel="stylesheet"/>
+	<!--<link href="../../plugins/select2/css/select2.min.css" rel="stylesheet"/>-->
+	<link href="../../css/common.css" rel="stylesheet"/>
+</head>
+<body>
+<div id="main">
+	<div id="toolbar">
+		<a id="add_role" class="waves-effect waves-button" href="javascript:;" ><i class="zmdi zmdi-plus"></i>新增角色</a>
+		<label>角色名称：</label><input id="s_rolename" class="mr10 input-search" type="text"/>
+		<button id="role_search" type="button" class="btn btn-default btn-sm ml50">查询</button>
+	</div>
+
+	<table id="table"></table>
+</div>
+<!-- 新增 -->
+<div id="roleinfo" class="col-xs-8" style="padding: 20px 10px 10px 50px;" hidden>
+	<div class="form-item blk-title" >
+		<span>新增角色</span>
+	</div>
+	<div class="form-item">
+		<label class="form-label">角色名称：</label>
+		<input id="role_name" class="input-search2" type="text">
+		<span class="red">*</span>
+	</div>
+	<div class="form-item">
+		<label class="form-label">角色描述：</label>
+		<textarea id="role_des" class="form-txtarea"></textarea>
+	</div>
+	<div class="form-item2 col-xs-7" style="text-align: center;">
+		<button id="doAddRole" type="button" class="btn btn-info btn-sm btn-margin">新增</button>
+		<button id="cancelAddRole" type="button" class="btn btn-default btn-sm btn-margin">取消</button>
+	</div>
+</div>
+<!-- 菜单分配 -->
+<div id="menu_config_blk" class="col-xs-8" style="padding: 20px 10px 10px 50px;" hidden>
+	<input id="roleId" type="hidden">
+	<div class="form-item blk-title" >
+		<span>菜单分配</span>
+	</div>
+	<div>
+		<ul id="menu_tree" class="ztree"></ul>
+	</div>
+	<div class="form-item2 col-xs-7" style="text-align: center;">
+		<button id="saveMenus" type="button" class="btn btn-info btn-sm btn-margin">保存</button>
+		<button id="cancelMenus" type="button" class="btn btn-default btn-sm btn-margin">取消</button>
+	</div>
+</div>
+
+</body>
+<script src="../../plugins/jquery.1.12.4.min.js"></script>
+<script src="../../plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+<script src="../../plugins/bootstrap-table-1.11.0/bootstrap-table.min.js"></script>
+<script src="../../plugins/bootstrap-table-1.11.0/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="../../plugins/waves-0.7.5/waves.min.js"></script>
+<script src="../../plugins/jquery-confirm/jquery-confirm.min.js"></script>
+<!--<script src="../../plugins/select2/js/select2.min.js"></script>-->
+<script src="../../plugins/layer/layer.js"></script>
+<!-- ztree -->
+<script src="../../plugins/zTree_v3/js/jquery.ztree.core.min.js"></script>
+<script src="../../plugins/zTree_v3/js/jquery.ztree.excheck.min.js"></script>
+<script src="../../js/utils.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/base/rolelist.js"></script>
+</html>

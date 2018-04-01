@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.archer.ssm.module.base.mapper.SysMenuMapper" >
+
+    <!-- 新增 -->
+    <insert id="add" parameterType="com.archer.ssm.module.base.pojo.SysMenu">
+        INSERT INTO sys_menu(menuId,menuLevel,menuName,supMenuId,supMenuName,menuUrl,menuSeq,menuIcon,createTime)
+        VALUES (#{menuId},#{menuLevel},#{menuName},#{supMenuId},#{supMenuName},#{menuUrl},#{menuSeq},#{menuIcon},#{createTime})
+    </insert>
+
+    <!-- 查询条数 -->
+    <select id="getCount" parameterType="com.archer.ssm.module.base.pojo.SysMenu" resultType="java.lang.Integer">
+        SELECT count(1) from sys_menu WHERE 1=1
+        <if test="menuName != null">
+          AND menuName like '%' +#{menuName}+ '%'
+        </if>
+        <if test="supMenuName != null">
+          AND supMenuName like '%' +#{supMenuName}+ '%'
+        </if>
+        <if test="menuLevel != null">
+          AND menuLevel = #{menuLevel}
+        </if>
+    </select>
+
+    <!-- 分页条件查询 -->
+    <select id="getPageList" resultType="com.archer.ssm.module.base.pojo.SysMenu">
+        SELECT TOP ${pageSize} * FROM (
+        SELECT ROW_NUMBER() OVER (ORDER BY createTime DESC ) AS rownumber,* FROM sys_menu
+        WHERE 1=1
+        <if test="entity.menuName != null">
+            AND menuName like '%' +#{entity.menuName}+ '%'
+        </if>
+        <if test="entity.supMenuName != null">
+            AND supMenuName like '%' +#{entity.supMenuName}+ '%'
+        </if>
+        <if test="entity.menuLevel != null">
+            AND menuLevel = #{entity.menuLevel}
+        </if>
+        ) AS a WHERE rownumber > #{pageIndex}
+    </select>
+
+    <!-- 查询父级菜单 -->
+    <select id="getSupMenus" parameterType="java.lang.Integer" resultType="com.archer.ssm.module.base.pojo.SysMenu">
+        SELECT menuId,menuName from sys_menu WHERE menuLevel = #{menuLevel} ORDER BY menuSeq
+    </select>
+
+    <!-- 查询菜单集合 -->
+    <select id="getList" resultType="com.archer.ssm.module.base.pojo.SysMenu">
+        SELECT * from sys_menu
+    </select>
+
+    <!-- 查询ztree菜单集合 -->
+    <select id="getZNodes" parameterType="java.lang.String" resultType="com.archer.ssm.module.base.pojo.ZNode">
+        SELECT
+        a.menuId as id,
+        'pId' = CASE WHEN a.supMenuId = '' THEN '0' ELSE a.supMenuId END,
+        a.menuName as name,
+        'checked' = CASE WHEN b.relationId is not null then 1 ELSE 0 END,
+        'open' = 1
+        from sys_menu a LEFT JOIN menu_role_relation b ON a.menuId = b.menuId AND b.roleId = #{roleId}
+    </select>
+
+
+</mapper>

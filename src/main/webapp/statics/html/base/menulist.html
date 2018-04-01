@@ -1,0 +1,95 @@
+﻿<!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>菜单管理</title>
+
+	<link href="../../plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
+	<link href="../../plugins/material-design-iconic-font-2.2.0/css/material-design-iconic-font.min.css" rel="stylesheet"/>
+	<link href="../../plugins/bootstrap-table-1.11.0/bootstrap-table.min.css" rel="stylesheet"/>
+	<link href="../../plugins/waves-0.7.5/waves.min.css" rel="stylesheet"/>
+	<!--<link href="../../plugins/jquery-confirm/jquery-confirm.min.css" rel="stylesheet"/>-->
+	<link href="../../plugins/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
+	<link href="../../css/common.css" rel="stylesheet"/>
+</head>
+<style type="text/css">
+	.opt-icon {
+		font-family: 'FontAwesome';
+	}
+</style>
+<body>
+<div id="main">
+	<div id="toolbar">
+		<a id="add_menu" class="waves-effect waves-button" href="javascript:;" ><i class="zmdi zmdi-plus"></i>新增菜单</a>
+		<label for="smenu_name">菜单名称：</label><input id="smenu_name" class="mr10 input-search" type="text"/>
+		<label for="ssup_menu_name">父级菜单名称：</label><input id="ssup_menu_name" class="mr10 input-search" type="text" />
+		<label for="smenu_level">菜单级别：</label>
+		<select id="smenu_level">
+			<option value="">选择级别</option>
+			<option value="1">一级</option>
+			<option value="2">二级</option>
+			<option value="3">三级</option>
+		</select>
+		<button id="menu_search" type="button" class="btn btn-default btn-sm ml50">查询</button>
+	</div>
+
+	<table id="table"></table>
+</div>
+<!-- 新增 -->
+<div id="menuinfo" class="col-xs-8" style="padding: 20px 10px 10px 50px;" hidden>
+	<div class="form-item blk-title" >
+		<span>新增菜单</span>
+	</div>
+	<div class="form-item">
+		<label class="form-label">菜单名称：</label>
+		<input id="menu_name" class="input-search2" type="text">
+		<span class="red">*</span>
+	</div>
+	<div class="form-item">
+		<label class="form-label">菜单级别：</label>
+		<select id="menu_level">
+			<option value="1">一级</option>
+			<option value="2">二级</option>
+			<option value="3">三级</option>
+		</select>
+	</div>
+	<div id="sup_menu_blk" class="form-item" hidden>
+		<label class="form-label">父菜单名称：</label>
+		<select id="sup_menuName">
+			<option value="">我是父级菜单</option>
+		</select>
+	</div>
+	<div class="form-item">
+		<label class="form-label">节点链接：</label>
+		<input id="menu_url" class="input-search2" type="text">
+	</div>
+	<div class="form-item">
+		<label class="form-label">菜单顺序：</label>
+		<input id="menu_seq" class="input-search2" type="text" placeholder="请输入1-99的数字">
+	</div>
+	<div class="form-item" >
+		<label class="form-label">菜单图标：</label>
+		<select id="menu_icon">
+			<option value="">请选择图标</option>
+			<option class="opt-icon" value="f1b9">&#xf1b9 汽车</option>
+		</select>
+	</div>
+	<div class="form-item2 col-xs-7" style="text-align: center;">
+		<button id="doAddMenu" type="button" class="btn btn-info btn-sm btn-margin">新增</button>
+		<button id="cancelAddMenu" type="button" class="btn btn-default btn-sm btn-margin">取消</button>
+	</div>
+</div>
+</body>
+<script src="../../plugins/jquery.1.12.4.min.js"></script>
+<script src="../../plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+<script src="../../plugins/bootstrap-table-1.11.0/bootstrap-table.min.js"></script>
+<script src="../../plugins/bootstrap-table-1.11.0/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="../../plugins/waves-0.7.5/waves.min.js"></script>
+<!--<script src="../../plugins/jquery-confirm/jquery-confirm.min.js"></script>-->
+<script src="../../plugins/layer/layer.js"></script>
+<script src="../../js/utils.js"></script>
+<script src="../../js/common.js"></script>
+<script src="../../js/base/menulist.js"></script>
+</html>

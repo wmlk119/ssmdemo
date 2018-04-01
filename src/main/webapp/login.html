@@ -1,0 +1,63 @@
+﻿<!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>登录页</title>
+
+	<link href="statics/plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
+	<link href="statics/plugins/material-design-iconic-font-2.2.0/css/material-design-iconic-font.min.css" rel="stylesheet"/>
+	<link href="statics/plugins/waves-0.7.5/waves.min.css" rel="stylesheet"/>
+	<link href="statics/plugins/checkbix/css/checkbix.min.css" rel="stylesheet"/>
+	<link href="statics/css/login.css" rel="stylesheet"/>
+</head>
+<body>
+<div id="login-window">
+	<div class="input-group m-b-20">
+		<span class="input-group-addon"><i class="zmdi zmdi-account"></i></span>
+		<div class="fg-line">
+			<input id="username" type="text" class="form-control" name="username" placeholder="帐号" required autofocus >
+		</div>
+	</div>
+	<div class="input-group m-b-20">
+		<span class="input-group-addon"><i class="zmdi zmdi-male"></i></span>
+		<div class="fg-line">
+			<input id="password" type="password" class="form-control" name="password" placeholder="密码" required >
+		</div>
+	</div>
+	<div class="clearfix">
+	</div>
+	<div class="input-group m-b-20">
+		<span class="input-group-addon"><i class="zmdi zmdi-pin"></i></span>
+		<div class="fg-line">
+			<select id="dist_code" class="form-control">
+				<option value="1">市区</option>
+				<option value="2">铜山区</option>
+				<option value="3">贾汪区</option>
+				<option value="4">丰县</option>
+				<option value="5">沛县</option>
+				<option value="6">睢宁县</option>
+				<option value="7">邳州市</option>
+				<option value="8">新沂市</option>
+			</select>
+		</div>
+	</div>
+	<!--<div class="checkbox">-->
+		<!--<input id="rememberMe" type="checkbox" class="checkbix" data-text="自动登录" name="rememberMe">-->
+	<!--</div>-->
+	<a id="login-bt" href="javascript:;" class="waves-effect waves-button waves-float"><i class="zmdi zmdi-arrow-forward"></i></a>
+</div>
+<script src="statics/plugins/jquery.1.12.4.min.js"></script>
+<script src="statics/plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+<script src="statics/plugins/waves-0.7.5/waves.min.js"></script>
+<script src="statics/plugins/checkbix/js/checkbix.min.js"></script>
+<script src="statics/plugins/layer/layer.js"></script>
+<script src="statics/plugins/jquery.cookie.js"></script>
+<script src="statics/js/utils.js"></script>
+<script src="statics/js/login.js"></script>
+<script type="text/javascript">
+	Checkbix.init();
+</script>
+</body>
+</html>

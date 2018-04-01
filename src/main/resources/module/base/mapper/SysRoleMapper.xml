@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.archer.ssm.module.base.mapper.SysRoleMapper" >
+
+    <!-- 新增 -->
+    <insert id="add" parameterType="com.archer.ssm.module.base.pojo.SysRole">
+        INSERT INTO sys_role (roleId,roleName,roleDes,createTime)
+        VALUES (#{roleId}, #{roleName}, #{roleDes}, #{createTime})
+    </insert>
+
+    <!-- 获取角色集合 -->
+    <select id="getList" resultType="com.archer.ssm.module.base.pojo.SysRole">
+        SELECT * from sys_role
+    </select>
+
+    <!-- 查询条数 -->
+    <select id="getCount" parameterType="com.archer.ssm.module.base.pojo.SysRole" resultType="java.lang.Integer">
+        SELECT count(1) from sys_role WHERE 1=1
+        <if test="roleName != null">
+            AND roleName LIKE '%'+ #{roleName} +'%'
+        </if>
+    </select>
+
+    <!-- 分页条件查询 -->
+    <select id="getPageList" resultType="com.archer.ssm.module.base.pojo.SysRole">
+        SELECT TOP ${pageSize} * FROM (
+        SELECT ROW_NUMBER() OVER (ORDER BY createTime DESC ) AS rownumber,* FROM sys_role
+        WHERE 1=1
+        <if test="entity.roleName != null">
+            AND roleName LIKE '%'+ #{entity.roleName} +'%'
+        </if>
+        ) AS a WHERE rownumber > #{pageIndex}
+    </select>
+
+</mapper>
