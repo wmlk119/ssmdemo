@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @create 2018-03-21 9:48
  */
 public class ResultBody implements Serializable {
-    // 响应代码 成功=000，失败=001，异常=002
+    // 响应代码 成功=000，失败=001，异常=002，003=登录超时
     private String code;
     // 响应信息
     private String msg;

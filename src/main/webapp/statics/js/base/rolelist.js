@@ -4,6 +4,7 @@
  */
 var rolelist_obj = {};
 rolelist_obj.$table = $('#table');
+// 角色包含菜单ID集合
 rolelist_obj.selMenus = [];
 $(function() {
     // bootstrap table初始化
@@ -225,12 +226,96 @@ rolelist_obj.doCancel = function () {
 
 // 保存菜单分配
 rolelist_obj.saveMenus = function () {
-    $('#main').show();
-    $('#menu_config_blk').hide();
+    // 计算新增和删除菜单ID集合
+    var addMenuIds = []; // 新增的菜单ID集合
+    var delMenuIds = []; // 删除的菜单ID集合
+    var checkedNodes = $.fn.zTree.getZTreeObj("menu_tree").getCheckedNodes(true);
+    var checkMenuIds = [];
+    for(var i=0,len =checkedNodes.length;i<len;i++ ){
+        var node = checkedNodes[i];
+        checkMenuIds.push(node.id);
+    }
+    var prelen = rolelist_obj.selMenus.length; // 原选择菜单集合长度
+    var checklen = checkMenuIds.length; // 新选择菜单集合长度
+    // 是否修改
+    if(prelen && prelen == checklen){
+        rolelist_obj.selMenus.sort(function(a,b){
+            return a-b;
+        });
+        checkMenuIds.sort(function(a,b){
+            return a-b;
+        });
+        var selMenus_str = rolelist_obj.selMenus.join('');
+        var checkMenuIds_str = checkMenuIds.join('');
+        if(selMenus_str == checkMenuIds_str){
+            $('#main').show();
+            $('#menu_config_blk').hide();
+            return;
+        }
+    }
+    // 新增菜单ID计算
+    if(prelen>0 && checklen>0){ // 部分新增或删除
+        // 统计删除菜单
+        for(var i=0;i<prelen;i++){
+            var pre_obj = rolelist_obj.selMenus[i];
+            if(checkMenuIds.indexOf(pre_obj) == -1){
+                delMenuIds.push(pre_obj);
+            }
+        }
+        // 统计新增菜单
+        for(var j=0;j<checklen;j++){
+            var check_obj = checkMenuIds[j];
+            if(rolelist_obj.selMenus.indexOf(check_obj) ==-1){
+                addMenuIds.push(check_obj);
+            }
+        }
+    }else if(prelen == 0 && checklen>0){ //全部新增
+        addMenuIds = checkMenuIds;
+    }else if(prelen > 0 && checklen ==0){ // 全部删除
+        delMenuIds = rolelist_obj.selMenus;
+    }else if(prelen == 0 && checklen ==0){
+        layer.msg("请选择相关菜单分配");
+        return;
+    }
+    // 更新操作
+    rolelist_obj.updateRoleMenus(addMenuIds,delMenuIds);
 }
 
 // 取消菜单分配
 rolelist_obj.cancelMenus = function () {
     $('#main').show();
     $('#menu_config_blk').hide();
+}
+
+/**
+ * 提交菜单分配请求
+ * @param addMenuIds array
+ * @param delMenuIds array
+ */
+rolelist_obj.updateRoleMenus = function(addMenuIds,delMenuIds){
+    // ajax提交
+    $.ajax({
+        url: $.ssm_utils.getRootURL() + '/ssm/menurole/update',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            addMenuIds: JSON.stringify(addMenuIds),
+            delMenuIds: JSON.stringify(delMenuIds),
+            roleId: $('#roleId').val()
+        },
+        beforeSend: function() {
+        },
+        success: function(res){
+            var code = res.code;
+            var msg = res.msg;
+            layer.msg(msg);
+            if(code && '000' == code){
+                $('#main').show();
+                $('#menu_config_blk').hide();
+            }
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
 }
