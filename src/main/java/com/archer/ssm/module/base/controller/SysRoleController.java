@@ -85,7 +85,7 @@ public class SysRoleController extends BaseController{
         }
         // 新增角色
         SysRole entity = new SysRole();
-        entity.setRoleId(UniqId.getInstance().get19UniqID());
+        entity.setRoleId(UniqId.getInstance().getWorkId().toString());
         entity.setRoleName(roleName);
         entity.setRoleDes(roleDes);
         entity.setCreateTime(DateUtils.formatDateTime(new Date()));

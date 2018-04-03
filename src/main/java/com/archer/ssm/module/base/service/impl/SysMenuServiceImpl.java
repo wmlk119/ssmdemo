@@ -53,4 +53,16 @@ public class SysMenuServiceImpl implements SysMenuService {
     public List<ZNode> getZNodes(String roleId) {
         return sysMenuMapper.getZNodes(roleId);
     }
+
+    // 根据角色id查询菜单集合
+    @Override
+    public List<SysMenu> getListByRoleId(String roleId) {
+        return sysMenuMapper.getListByRoleId(roleId);
+    }
+
+    // 更新
+    @Override
+    public int update(SysMenu entity) {
+        return sysMenuMapper.update(entity);
+    }
 }

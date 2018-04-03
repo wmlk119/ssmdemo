@@ -205,7 +205,7 @@ public class UserInfoController extends BaseController{
             // 生成加密密码
             PasswordHash passwordHash = PasswordUtil.encrypt("000000");
             // 保存账号
-            paraEntity.setUserId(UniqId.getInstance().get19UniqID());
+            paraEntity.setUserId(UniqId.getInstance().getWorkId().toString());
             paraEntity.setLoginPwd(passwordHash.getHexEncoded());
             paraEntity.setPwdSalt(passwordHash.getSalt());
             paraEntity.setCreateTime(DateUtils.formatDateTime(new Date()));

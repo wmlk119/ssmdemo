@@ -60,5 +60,26 @@
         from sys_menu a LEFT JOIN menu_role_relation b ON a.menuId = b.menuId AND b.roleId = #{roleId}
     </select>
 
+    <!-- 根据角色id查询菜单集合 -->
+    <select id="getListByRoleId" parameterType="java.lang.String" resultType="com.archer.ssm.module.base.pojo.SysMenu">
+        SELECT * from sys_menu WHERE menuId in (SELECT menuId from menu_role_relation WHERE roleId = #{roleId})
+    </select>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="com.archer.ssm.module.base.pojo.SysMenu">
+        UPDATE sys_menu
+        <set>
+            <if test="menuUrl != null">
+                menuUrl = #{menuUrl},
+            </if>
+            <if test="menuSeq != null">
+                menuSeq = #{menuSeq},
+            </if>
+            <if test="menuIcon != null">
+                menuIcon = #{menuIcon}
+            </if>
+        </set>
+        WHERE menuId = #{menuId}
+    </update>
 
 </mapper>

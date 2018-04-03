@@ -7,7 +7,7 @@
 	<title>菜单管理</title>
 
 	<link href="../../plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
-	<link href="../../plugins/material-design-iconic-font-2.2.0/css/material-design-iconic-font.min.css" rel="stylesheet"/>
+	<!--<link href="../../plugins/material-design-iconic-font-2.2.0/css/material-design-iconic-font.min.css" rel="stylesheet"/>-->
 	<link href="../../plugins/bootstrap-table-1.11.0/bootstrap-table.min.css" rel="stylesheet"/>
 	<link href="../../plugins/waves-0.7.5/waves.min.css" rel="stylesheet"/>
 	<!--<link href="../../plugins/jquery-confirm/jquery-confirm.min.css" rel="stylesheet"/>-->
@@ -39,8 +39,9 @@
 </div>
 <!-- 新增 -->
 <div id="menuinfo" class="col-xs-8" style="padding: 20px 10px 10px 50px;" hidden>
+	<input id="menuId" type="hidden">
 	<div class="form-item blk-title" >
-		<span>新增菜单</span>
+		<span id="menuinfo_title">新增菜单</span>
 	</div>
 	<div class="form-item">
 		<label class="form-label">菜单名称：</label>
@@ -73,11 +74,17 @@
 		<label class="form-label">菜单图标：</label>
 		<select id="menu_icon">
 			<option value="">请选择图标</option>
-			<option class="opt-icon" value="f1b9">&#xf1b9 汽车</option>
+			<option class="opt-icon" value="f1b9">&#xf085  系统</option>
+			<option class="opt-icon" value="f015">&#xf015  首页</option>
+			<option class="opt-icon" value="f0c0">&#xf0c0  用户</option>
+			<option class="opt-icon" value="f007">&#xf007  角色</option>
+			<option class="opt-icon" value="f0c9">&#xf0c9  菜单</option>
+			<option class="opt-icon" value="f141">&#xf141  常用</option>
 		</select>
 	</div>
 	<div class="form-item2 col-xs-7" style="text-align: center;">
 		<button id="doAddMenu" type="button" class="btn btn-info btn-sm btn-margin">新增</button>
+		<button id="doEditMenu" type="button" class="btn btn-info btn-sm btn-margin" hidden>保存</button>
 		<button id="cancelAddMenu" type="button" class="btn btn-default btn-sm btn-margin">取消</button>
 	</div>
 </div>

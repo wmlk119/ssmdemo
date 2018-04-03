@@ -4,6 +4,7 @@
  */
 var menulist_obj = {};
 menulist_obj.$table = $('#table');
+menulist_obj.preMenu = {};
 $(function() {
     // bootstrap table初始化
     menulist_obj.$table.bootstrapTable({
@@ -62,6 +63,11 @@ $(function() {
     $("#cancelAddMenu").on('click',function (e) {
         menulist_obj.doCancel();
     });
+    // 保存修改
+    $("#doEditMenu").on('click',function(e){
+        menulist_obj.doSave();
+    });
+
     // 新增-菜单级别切换
     $('#menu_level').on('change',function(e){
         menulist_obj.selMenuLev();
@@ -94,8 +100,9 @@ menulist_obj.actionFormatter = function (value, row, index) {
 
 window.actionEvents = {
     'click .edit': function (e, value, row, index) {
-        alert('You click edit icon, row: ' + JSON.stringify(row));
-        console.log(value, row, index);
+        // alert('You click edit icon, row: ' + JSON.stringify(row));
+        // console.log(value, row, index);
+        menulist_obj.goEditMenu(row);
     },
     'click .remove': function (e, value, row, index) {
         alert('You click remove icon, row: ' + JSON.stringify(row));
@@ -113,19 +120,63 @@ menulist_obj.SearchData = function () {
 // 转向新增界面
 menulist_obj.createAction = function () {
     // 表单初始化
+    $('#menuinfo_title').text('新增菜单');
     $('#menu_name').val('');
+    $('#menu_name').removeAttr("disabled");
     $('#menu_level').val(1);
+    $('#menu_level').removeAttr("disabled");
+    $('#sup_menuName').removeAttr('disabled');
     $('#sup_menu_blk').hide();
     $('#menu_url').val('');
     $('#menu_seq').val('');
     $('#menu_icon').val('');
+    $('#doAddMenu').show();
+    $("#doEditMenu").hide();
     $("#main").hide();
     $("#menuinfo").show();
     // 清楚所有错误信息
     $.ssm_utils.removeAllErrMsg();
 }
 
-// 新增角色
+/**
+ * 转向编辑菜单界面
+ * @param obj
+ */
+menulist_obj.goEditMenu = function(obj){
+    // 初始化
+    $('#menuinfo_title').text('编辑菜单');
+    $('#menuId').val(obj.menuId);
+    $('#menu_name').val(obj.menuName);
+    $('#menu_name').attr('disabled','disabled');
+    $('#menu_level').val(obj.menuLevel);
+    $('#menu_level').attr('disabled','disabled');
+    if(obj.menuLevel!=1){
+        $('#sup_menuName').empty();
+        $('#sup_menuName').append('<option value="'+obj.supMenuId+'">'+obj.supMenuName+'</option>');
+        $('#sup_menu_blk').show();
+        $('#sup_menuName').attr('disabled','disabled');
+    }else{
+        $('#sup_menuName').empty();
+        $('#sup_menu_blk').hide();
+        $('#sup_menuName').removeAttr('disabled');
+    }
+    $('#menu_url').val(obj.menuUrl);
+    $('#menu_seq').val(obj.menuSeq);
+    $('#menu_icon').val(obj.menuIcon);
+    // 保存原菜单参数
+    menulist_obj.preMenu.menuUrl = obj.menuUrl;
+    menulist_obj.preMenu.menuSeq = obj.menuSeq;
+    menulist_obj.preMenu.menuIcon = obj.menuIcon;
+
+    $('#doAddMenu').hide();
+    $("#doEditMenu").show();
+    $("#main").hide();
+    $("#menuinfo").show();
+    // 清楚所有错误信息
+    $.ssm_utils.removeAllErrMsg();
+}
+
+// 新增菜单
 menulist_obj.doAdd = function () {
     // 输入参数验证
     if(!menulist_obj.formCheck()){
@@ -162,6 +213,88 @@ menulist_obj.doAdd = function () {
         }
     });
 }
+
+/**
+ * 保存编辑菜单
+ */
+menulist_obj.doSave = function () {
+    // 验证保存参数
+    var obj = {}; // 更新菜单对象
+    obj.menuId = $('#menuId').val();
+    var count = 0;
+    var menu_url = $('#menu_url').val().replace(/\s/g,'');
+    if(menu_url){
+        if(menu_url.length >= 255){
+            $.ssm_utils.addErrMsg($('#menu_url'),'字符长度不超过255个');
+            return;
+        }else{
+            $.ssm_utils.removeErrMsg($('#menu_url'));
+        }
+    }
+    if(menu_url != menulist_obj.preMenu.menuUrl){
+        count++;
+        obj.menuUrl = menu_url;
+    }
+    var menu_seq = $('#menu_seq').val();
+    if(menu_seq){
+        if(!/^[1-9]\d?$/.test(menu_seq)){
+            $.ssm_utils.addErrMsg($('#menu_seq'),'参数不符合要求');
+            return;
+        }else{
+            $.ssm_utils.removeErrMsg($('#menu_seq'));
+        }
+    }
+    if(menu_seq != menulist_obj.preMenu.menuSeq){
+        count++;
+        obj.menuSeq = menu_seq;
+    }
+    var menu_icon = $('#menu_icon').val();
+    if(menu_icon != menulist_obj.preMenu.menuIcon){
+        count++;
+        obj.menuIcon = menu_icon;
+    }
+    if(count==0){
+        menulist_obj.doCancel();
+    }else{
+        // 更新菜单
+        menulist_obj.updateMenu(obj);
+    }
+}
+
+/**
+ * 提交菜单更新
+ * @param obj 更新菜单对象
+ */
+menulist_obj.updateMenu = function(obj){
+    // ajax
+    $.ajax({
+        url: $.ssm_utils.getRootURL() + '/ssm/sysmenu/update',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            menuId: obj.menuId,
+            menuUrl: obj.menuUrl,
+            menuSeq: obj.menuSeq==''?0:obj.menuSeq,
+            menuIcon: obj.menuIcon
+        },
+        beforeSend: function() {
+        },
+        success: function(res){
+            var code = res.code;
+            var msg = res.msg;
+            layer.msg(msg);
+            if(code && '000' == code){
+                $("#menuinfo").hide();
+                $("#main").show();
+                menulist_obj.SearchData();
+            }
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+}
+
 
 // 取消新增
 menulist_obj.doCancel = function () {

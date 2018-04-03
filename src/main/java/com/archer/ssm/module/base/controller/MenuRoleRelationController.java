@@ -57,12 +57,13 @@ public class MenuRoleRelationController extends BaseController{
         // 构造新增菜单角色关联集合
         List<MenuRoleRelation> menuRoleRelations = new ArrayList<MenuRoleRelation>();
         if(!CollectionUtils.isEmpty(addMenuIdList)){
+            String createTime = DateUtils.formatDateTime(new Date());
             addMenuIdList.stream().forEach(menuId ->{
                 MenuRoleRelation relation = new MenuRoleRelation();
-                relation.setRelationId(UniqId.getInstance().get19UniqID());
+                relation.setRelationId(UniqId.getInstance().getWorkId().toString());
                 relation.setRoleId(roleId);
                 relation.setMenuId(menuId);
-                relation.setCreateTime(DateUtils.formatDateTime(new Date()));
+                relation.setCreateTime(createTime);
                 menuRoleRelations.add(relation);
             });
         }

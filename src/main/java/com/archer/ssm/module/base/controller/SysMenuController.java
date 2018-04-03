@@ -1,5 +1,6 @@
 package com.archer.ssm.module.base.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.archer.ssm.module.base.pojo.BootstrapTableResult;
 import com.archer.ssm.module.base.pojo.ResultBody;
 import com.archer.ssm.module.base.pojo.SysMenu;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -114,7 +116,7 @@ public class SysMenuController extends BaseController{
             if(null == menuSeq){
                 paraEntity.setMenuSeq(0);
             }
-            paraEntity.setMenuId(UniqId.getInstance().get19UniqID());
+            paraEntity.setMenuId(UniqId.getInstance().getWorkId().toString());
             paraEntity.setCreateTime(DateUtils.formatDateTime(new Date()));
             sysMenuService.add(paraEntity);
             res.setCode("000");
@@ -193,7 +195,34 @@ public class SysMenuController extends BaseController{
         return res;
     }
 
-
+    /**
+     * 更新菜单
+     * @param request
+     * @param sysMenu
+     * @return
+     */
+    @RequestMapping(value = "/update",method = RequestMethod.POST)
+    @ResponseBody
+    public ResultBody doUpdate(HttpServletRequest request,SysMenu sysMenu){
+        ResultBody res = new ResultBody();
+        try {
+            // 验证参数
+            if(StringUtils.isEmpty(sysMenu.getMenuId())){
+                res.setCode("001");
+                res.setMsg("菜单ID为空");
+                return res;
+            }
+            // 更新菜单
+            sysMenuService.update(sysMenu);
+            res.setCode("000");
+            res.setMsg("更新菜单成功");
+        } catch (Exception e) {
+            res.setCode("002");
+            res.setMsg("更新菜单异常");
+            log.error("更新菜单异常：",e);
+        }
+        return res;
+    }
 
 
 }

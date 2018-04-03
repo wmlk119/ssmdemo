@@ -22,6 +22,7 @@ public class UniqId {
     private String hostAddr;
     private final Random random = new SecureRandom();
     private final UniqTimer timer = new UniqTimer();
+    private static final Sequence worker = new Sequence();
 
     private boolean isOutputInfo = false;
 
@@ -116,6 +117,15 @@ public class UniqId {
         sb.append(randomNumber);
         return sb.toString();
     }
+
+    /**
+     * sequence产生GUID
+     * @return
+     */
+    public Long getWorkId(){
+        return worker.nextId();
+    }
+
 
     public String getUniqThreadCode(){
         String threadCode = StringUtils.left(String.valueOf(Thread.currentThread().hashCode()),9);

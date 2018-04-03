@@ -1,5 +1,6 @@
 package com.archer.ssm.common;
 
+import com.archer.ssm.utils.common.Sequence;
 import com.archer.ssm.utils.common.UniqId;
 
 /**
@@ -15,8 +16,15 @@ public class UniqIdTest {
 //        System.out.println(uid);
 //        System.out.println(uid.length());
 
-        String uid19 = UniqId.getInstance().get19UniqID();
-        System.out.println(uid19);
+//        String uid19 = UniqId.getInstance().get19UniqID();
+//        System.out.println(uid19);
+        doSeqIdTest();
+    }
 
+    public static void doSeqIdTest(){
+        Sequence sequence = new Sequence();
+        for(int i=0;i<100;i++){
+            System.out.println(sequence.nextId());
+        }
     }
 }

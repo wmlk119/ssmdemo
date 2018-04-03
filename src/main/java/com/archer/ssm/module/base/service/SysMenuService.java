@@ -25,5 +25,10 @@ public interface SysMenuService {
     // 根据角色ID获取ztree菜单集合
     public List<ZNode> getZNodes(String roleId);
 
+    // 根据角色id查询菜单集合
+    public List<SysMenu> getListByRoleId(String roleId);
+
+    // 更新
+    public int update(SysMenu entity);
 
 }
