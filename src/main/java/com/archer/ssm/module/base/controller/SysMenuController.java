@@ -45,13 +45,6 @@ public class SysMenuController extends BaseController{
     public BootstrapTableResult<SysMenu> getMenuList(HttpServletRequest request, String pageSize, String pageIndex,String menuName, String supMenuName,String menuLevel){
         BootstrapTableResult<SysMenu> res = new BootstrapTableResult<SysMenu>();
         try {
-            // 登录验证
-            UserInfo user = getUserInfo(request);
-            if(null == user){
-                res.setCode("003");
-                res.setMsg("登录超时");
-                return res;
-            }
             // 分页参数验证
             if(StringUtils.isEmpty(pageSize) || StringUtils.isEmpty(pageIndex)){
                 res.setTotal(0);
@@ -97,13 +90,6 @@ public class SysMenuController extends BaseController{
     public ResultBody doAdd(HttpServletRequest request, SysMenu paraEntity){
         ResultBody res = new ResultBody();
         try {
-            // 登录验证
-            UserInfo user = getUserInfo(request);
-            if(null == user){
-                res.setCode("003");
-                res.setMsg("登录超时");
-                return res;
-            }
             // 参数验证
             String menuName = paraEntity.getMenuName();
             Integer menuLevel = paraEntity.getMenuLevel();
@@ -151,13 +137,6 @@ public class SysMenuController extends BaseController{
     public ResultBody getSupMenus(HttpServletRequest request,String menuLevel){
         ResultBody res = new ResultBody();
         try {
-            // 登录验证
-            UserInfo user = getUserInfo(request);
-            if(null == user){
-                res.setCode("003");
-                res.setMsg("登录超时");
-                return res;
-            }
             // 参数验证
             if(StringUtils.isEmpty(menuLevel)){
                 res.setCode("001");
@@ -187,13 +166,6 @@ public class SysMenuController extends BaseController{
     public ResultBody getZNodes(HttpServletRequest request,String roleId){
         ResultBody res = new ResultBody();
         try {
-            // 登录验证
-            UserInfo user = getUserInfo(request);
-            if(null == user){
-                res.setCode("003");
-                res.setMsg("登录超时");
-                return res;
-            }
             // 参数验证
             if(StringUtils.isEmpty(roleId)){
                 res.setCode("001");
@@ -232,13 +204,6 @@ public class SysMenuController extends BaseController{
     public ResultBody doUpdate(HttpServletRequest request,SysMenu sysMenu){
         ResultBody res = new ResultBody();
         try {
-            // 登录验证
-            UserInfo user = getUserInfo(request);
-            if(null == user){
-                res.setCode("003");
-                res.setMsg("登录超时");
-                return res;
-            }
             // 验证参数
             if(StringUtils.isEmpty(sysMenu.getMenuId())){
                 res.setCode("001");

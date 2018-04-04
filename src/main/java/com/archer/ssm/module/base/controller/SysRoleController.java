@@ -44,13 +44,6 @@ public class SysRoleController extends BaseController{
     public BootstrapTableResult<SysRole> getRoleList(HttpServletRequest request, String pageSize, String pageIndex, String roleName){
         BootstrapTableResult<SysRole> res = new BootstrapTableResult<SysRole>();
         try {
-            // 登录验证
-            UserInfo user = getUserInfo(request);
-            if(null == user){
-                res.setCode("003");
-                res.setMsg("登录超时");
-                return res;
-            }
             if(StringUtils.isEmpty(pageSize) || StringUtils.isEmpty(pageIndex)){
                 res.setTotal(0);
                 res.setMsg("分页查询参数为空");
@@ -89,13 +82,6 @@ public class SysRoleController extends BaseController{
     public ResultBody doAdd(HttpServletRequest request, String roleName, String roleDes){
         ResultBody res = new ResultBody();
         try {
-            // 登录验证
-            UserInfo user = getUserInfo(request);
-            if(null == user){
-                res.setCode("003");
-                res.setMsg("登录超时");
-                return res;
-            }
             if(StringUtils.isEmpty(roleName)){
                 res.setCode("001");
                 res.setMsg("角色名不能为空");
@@ -128,13 +114,6 @@ public class SysRoleController extends BaseController{
     public ResultBody getList(HttpServletRequest request){
         ResultBody res = new ResultBody();
         try {
-            // 登录验证
-            UserInfo user = getUserInfo(request);
-            if(null == user){
-                res.setCode("003");
-                res.setMsg("登录超时");
-                return res;
-            }
             List<SysRole> list = sysRoleService.getList();
             res.setResult(list);
             res.setCode("000");

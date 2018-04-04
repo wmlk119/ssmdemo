@@ -47,13 +47,6 @@ public class MenuRoleRelationController extends BaseController{
     public ResultBody doUpdate(HttpServletRequest request,String addMenuIds,String delMenuIds,String roleId){
         ResultBody res = new ResultBody();
         try {
-            // 登录验证
-            UserInfo user = getUserInfo(request);
-            if(null == user){
-                res.setCode("003");
-                res.setMsg("登录超时");
-                return res;
-            }
             // 参数验证
             if(StringUtils.isEmpty(roleId)||StringUtils.isEmpty(addMenuIds)||StringUtils.isEmpty(delMenuIds)){
                 res.setMsg("请求参数为空");

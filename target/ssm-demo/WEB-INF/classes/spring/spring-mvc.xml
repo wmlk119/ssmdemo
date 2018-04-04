@@ -17,6 +17,16 @@
     <mvc:default-servlet-handler/>
     <mvc:resources mapping="/statics/**" location="/statics/"/>
 
+    <!-- 拦截器 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/ssm/**"/>
+            <mvc:exclude-mapping path="/ssm/userinfo/login"/>
+            <mvc:exclude-mapping path="/ssm/userinfo/logout"/>
+            <bean class="com.archer.ssm.module.base.interceptor.AuthInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
     <bean id="defaultViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
         <property name="prefix" value="/WEB-INF/view/"/>

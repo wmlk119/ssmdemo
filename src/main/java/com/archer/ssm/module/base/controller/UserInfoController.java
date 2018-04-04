@@ -142,13 +142,6 @@ public class UserInfoController extends BaseController{
     public BootstrapTableResult<UserInfo> getUserList(HttpServletRequest request,String pageSize, String pageIndex, String userName, String loginName, String isEnable){
         BootstrapTableResult<UserInfo> res = new BootstrapTableResult<UserInfo>();
         try {
-            // 登录验证
-            UserInfo user = getUserInfo(request);
-            if(null == user){
-                res.setCode("003");
-                res.setMsg("登录超时");
-                return res;
-            }
             if(StringUtils.isEmpty(pageSize) || StringUtils.isEmpty(pageIndex)){
                 res.setTotal(0);
                 res.setMsg("分页查询参数为空");
@@ -192,13 +185,6 @@ public class UserInfoController extends BaseController{
     public ResultBody doAdd(HttpServletRequest request, UserInfo paraEntity){
         ResultBody res = new ResultBody();
         try {
-            // 登录验证
-            UserInfo user = getUserInfo(request);
-            if(null == user){
-                res.setCode("003");
-                res.setMsg("登录超时");
-                return res;
-            }
             // 输入参数验证
             String loginName = paraEntity.getLoginName();
             String userName = paraEntity.getUserName();
@@ -247,7 +233,7 @@ public class UserInfoController extends BaseController{
     public ResultBody indexInit(HttpServletRequest request){
         ResultBody res = new ResultBody();
         try {
-            // 获取用户信息
+            // 登录验证
             UserInfo user = getUserInfo(request);
             if(null == user){
                 res.setCode("003");
