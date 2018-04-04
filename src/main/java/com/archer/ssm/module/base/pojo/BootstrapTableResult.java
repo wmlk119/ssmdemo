@@ -16,7 +16,7 @@ public class BootstrapTableResult<T> implements Serializable{
     private List<T> rows;
     // 消息
     private String msg;
-    // 结果代码 000=成功，001=失败，002=异常
+    // 结果代码 000=成功，001=失败，002=异常，003=登录超时
     private String code;
 
     public Integer getTotal() {
@@ -41,5 +41,13 @@ public class BootstrapTableResult<T> implements Serializable{
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }

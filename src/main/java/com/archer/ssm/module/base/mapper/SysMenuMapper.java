@@ -8,10 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SysMenuMapper {
+public interface SysMenuMapper extends BaseMapper<SysMenu>{
 
     // 新增
-    public int add(SysMenu entity);
+//    public int add(SysMenu entity);
 
     // 查询条数
     public int getCount(SysMenu entity);
@@ -23,7 +23,7 @@ public interface SysMenuMapper {
     public List<SysMenu> getSupMenus(int menuLevel);
 
     // 查询菜单集合
-    public List<SysMenu> getList();
+//    public List<SysMenu> getList();
 
     // 根据角色id获取ztree菜单集合
     public List<ZNode> getZNodes(String roleId);
@@ -32,6 +32,6 @@ public interface SysMenuMapper {
     public List<SysMenu> getListByRoleId(String roleId);
 
     // 更新
-    public int update(SysMenu entity);
+//    public int update(SysMenu entity);
 
 }

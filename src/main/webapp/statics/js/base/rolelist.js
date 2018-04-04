@@ -37,7 +37,13 @@ $(function() {
             {field: 'action', title: '操作', halign: 'center', align: 'center', formatter: 'rolelist_obj.actionFormatter', events: 'actionEvents', clickToSelect: false}
         ],
         onLoadSuccess: function(data){  //加载成功时执行
-            console.info("加载成功");
+            var code = data.code;
+            var msg = data.msg;
+            if('003'== code){
+                $.ssm_utils.timeoutAction();
+            }else if('000' != code){
+                layer.msg(msg);
+            }
         }
     }).on('all.bs.table', function (e, name, args) {
         $('[data-toggle="tooltip"]').tooltip();
@@ -147,20 +153,14 @@ window.menuConfigEvents = {
                     }
                     if(znodes && znodes.length >0){
                         var setting = {
-                            check: {
-                                enable: true
-                            },
-                            data: {
-                                simpleData: {
-                                    enable: true
-                                }
-                            },
-                            view: {
-                                showIcon: false
-                            }
+                            check: { enable: true},
+                            data: { simpleData: { enable: true }},
+                            view: { showIcon: false }
                         };
                         $.fn.zTree.init($("#menu_tree"), setting, znodes);
                     }
+                }else if('003'== code){
+                    $.ssm_utils.timeoutAction();
                 }else{
                     layer.msg(msg);
                 }
@@ -205,11 +205,15 @@ rolelist_obj.doAdd = function () {
         success: function(res){
             var code = res.code;
             var msg = res.msg;
-            layer.msg(msg);
             if(code && '000' == code){
+                layer.msg(msg);
                 $("#roleinfo").hide();
                 $("#main").show();
                 rolelist_obj.SearchData();
+            }else if('003' == code){
+                $.ssm_utils.timeoutAction();
+            }else{
+                layer.msg(msg);
             }
         },
         error: function(error){
@@ -308,10 +312,14 @@ rolelist_obj.updateRoleMenus = function(addMenuIds,delMenuIds){
         success: function(res){
             var code = res.code;
             var msg = res.msg;
-            layer.msg(msg);
             if(code && '000' == code){
+                layer.msg(msg);
                 $('#main').show();
                 $('#menu_config_blk').hide();
+            }else if('003' == code){
+                $.ssm_utils.timeoutAction();
+            }else{
+                layer.msg(msg);
             }
         },
         error: function(error){

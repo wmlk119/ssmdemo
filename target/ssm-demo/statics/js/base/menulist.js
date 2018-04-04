@@ -37,7 +37,13 @@ $(function() {
             {field: 'action', title: '操作', halign: 'center', align: 'center', formatter: 'menulist_obj.actionFormatter', events: 'actionEvents', clickToSelect: false}
         ],
         onLoadSuccess: function(data){  //加载成功时执行
-            console.info("加载成功");
+            var code = data.code;
+            var msg = data.msg;
+            if('003'== code){
+                $.ssm_utils.timeoutAction();
+            }else if('000' != code){
+                layer.msg(msg);
+            }
         }
     }).on('all.bs.table', function (e, name, args) {
         $('[data-toggle="tooltip"]').tooltip();
@@ -201,11 +207,15 @@ menulist_obj.doAdd = function () {
         success: function(res){
             var code = res.code;
             var msg = res.msg;
-            layer.msg(msg);
             if(code && '000' == code){
+                layer.msg(msg);
                 $("#menuinfo").hide();
                 $("#main").show();
                 menulist_obj.SearchData();
+            }else if('003'== code){
+                $.ssm_utils.timeoutAction();
+            }else{
+                layer.msg(msg);
             }
         },
         error: function(error){
@@ -282,11 +292,15 @@ menulist_obj.updateMenu = function(obj){
         success: function(res){
             var code = res.code;
             var msg = res.msg;
-            layer.msg(msg);
             if(code && '000' == code){
+                layer.msg(msg);
                 $("#menuinfo").hide();
                 $("#main").show();
                 menulist_obj.SearchData();
+            }else if('003'== code){
+                $.ssm_utils.timeoutAction();
+            }else{
+                layer.msg(msg);
             }
         },
         error: function(error){
@@ -377,6 +391,8 @@ menulist_obj.getSupMenus = function(level){
                 }else{
                     layer.msg("父级菜单为空");
                 }
+            }else if('003'== code){
+                $.ssm_utils.timeoutAction();
             }else{
                 layer.msg(msg);
             }

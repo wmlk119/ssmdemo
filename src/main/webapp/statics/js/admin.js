@@ -1,6 +1,7 @@
 var click = device.mobile() ? 'touchstart' : 'click';
 $(function() {
-	// 是否登录验证
+	// 加载用户信息
+    getSysUserInfo();
 
 	// 初始信息加载
 	var username = $.cookie("_username");
@@ -8,59 +9,250 @@ $(function() {
 		$("#user_name").text(username);
 	}
 
-	// 侧边栏操作按钮
-	$(document).on(click, '#guide', function() {
-		$(this).toggleClass('toggled');
-		$('#sidebar').toggleClass('toggled');
-	});
-	// 侧边栏二级菜单
-	$(document).on('click', '.sub-menu a', function() {
-		$(this).next().slideToggle(200);
-		$(this).parent().toggleClass('toggled');
-	});
-	// 个人资料
-	$(document).on('click', '.s-profile a', function() {
-		$(this).next().slideToggle(200);
-		$(this).parent().toggleClass('toggled');
-	});
-	// Waves初始化
-	Waves.displayEffect();
-	// 滚动条初始化
-	$('#sidebar').mCustomScrollbar({
-		theme: 'minimal-dark',
-		scrollInertia: 100,
-		axis: 'yx',
-		mouseWheel: {
-			enable: true,
-			axis: 'y',
-			preventDefault: true
-		}
-	});
-	// 切换系统
-	$('.switch-systems').click(function () {
-		var systemid = $(this).attr('systemid');
-		var systemname = $(this).attr('systemname');
-		var systemtitle = $(this).attr('systemtitle');
-		$('.system_menus').hide(0, function () {
-			$('.system_' + systemid).show();
-		});
-		$('body').attr("id", systemname);
-		$('#system_title').text(systemtitle);
-		$.cookie('ssm-systemid', systemid);
-		$.cookie('ssm-systemname', systemname);
-		$.cookie('ssm-systemtitle', systemtitle);
-	});
-
-	// 显示cookie菜单
-	var systemid = $.cookie('ssm-systemid') || 1;
-	var systemname = $.cookie('ssm-systemname') || 'base-module';
-	var systemtitle = $.cookie('ssm-systemtitle') || '系统管理';
-	$('.system_menus').hide(0, function () {
-		$('.system_' + systemid).show();
-	});
-	$('body').attr('id', systemname);
-	$('#system_title').text(systemtitle);
 });
+
+// 获取用户信息
+function getSysUserInfo() {
+	// ajax请求
+    $.ajax({
+        url: $.ssm_utils.getRootURL() + '/ssm/userinfo/index',
+        type: 'POST',
+        dataType: 'json',
+        data: {},
+        beforeSend: function() {
+        },
+        success: function(res){
+            var code = res.code;
+            var msg = res.msg;
+            if(code && '000' == code){
+				var result = res.result;
+				var toplist = result.top;
+				var leftlist = result.left;
+                sysMenuBuild(toplist,leftlist);
+                // 样式初始化
+                cssInit();
+                // 菜单动态效果初始化
+                menuEventInit();
+            }else if('003' == code){
+				$.ssm_utils.timeoutAction();
+			}else{
+                layer.msg(msg);
+			}
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+}
+
+/**
+ * 构建系统菜单
+ * @param toplist
+ * @param leftlist
+ */
+function sysMenuBuild(toplist,leftlist) {
+	// 构建一级菜单树
+    $('#top_menu').empty();
+    var menu_str = '<li class="skin-switch">请选择模块切换</li><li class="divider"></li>';
+    var li_str = '';
+	if(toplist && toplist.length){
+		for(var i=0,len=toplist.length;i<len;i++){
+			var menu = toplist[i];
+            li_str += '<li>' +
+                '<a class="waves-effect switch-systems" systemid="'+menu.menuId
+				+'" systemtitle="'+menu.menuName+'"><i class="opt-icon mr8">&#x'+menu.menuIcon+'</i>'+menu.menuName+'</a>' +
+                '</li>';
+		}
+        var firstMenu = toplist[0];
+        // 保存cookie[ssm-systemid, ssm-systemtitle]
+        $.cookie("ssm-systemid",firstMenu.menuId);
+        $.cookie("ssm-systemtitle",firstMenu.menuName);
+	}
+    $('#top_menu').append(menu_str+li_str);
+
+	// 构建左侧菜单树
+	$('#left_menu').empty();
+	var left_str = '<li><a class="waves-effect" href="javascript:Tab.addTab(\'首页\', \'home\');"><i class="opt-icon">&#xf015</i>首页</a></li>';
+	var left_menus = '';
+	var left_end = '<li><div class="upms-version">&copy; SSM-DEMO V0.0.1</div></li>';
+	if(leftlist && leftlist.length){
+        // 重构左侧菜单数据
+        var menuDatas = buildNodeDatas(leftlist);
+        sortByMenuSeq(menuDatas);
+        // 构建左侧菜单树
+        var show_index = toplist[0].menuId;// 显示菜单父菜单ID
+        left_menus = buildLeftMenuTreeStr(show_index, menuDatas);
+	}
+    $('#left_menu').append(left_str+left_menus+left_end);
+}
+
+/**
+ * 构造左侧菜单树字符串
+ * @param show_index 显示菜单父菜单ID
+ * @param menuDatas 左侧菜单树数据
+ */
+function buildLeftMenuTreeStr(show_index,menuDatas) {
+	var str = '';
+	for(var i=0,ilen=menuDatas.length;i<ilen;i++){
+		var menu = menuDatas[i];
+		str += '<li class="sub-menu system_menus system_'+menu.supMenuId+'" '+buildLeftMenuUtil_1(show_index,menu)+'>'
+			+ '<a class="waves-effect" href="javascript:;"><i class="opt-icon">&#x'+menu.menuIcon+'</i>'+menu.menuName+'</a>';
+		if(menu.children && menu.children.length){
+            str += '<ul>';
+            for(var j=0,jlen=menu.children.length;j<jlen;j++){
+            	var cmenu = menu.children[j];
+                str += '<li><a class="waves-effect" href="javascript:Tab.addTab(\''+cmenu.menuName+'\', \''+cmenu.menuUrl+'\');">'+cmenu.menuName+'</a></li>';
+			}
+            str += '</ul>';
+		}
+        str += '</li>';
+	}
+	return str;
+}
+
+/**
+ * 构造左侧菜单树工具方法1
+ * @param show_index
+ * @param menu
+ * @returns {string}
+ */
+function buildLeftMenuUtil_1(show_index,menu) {
+	var str = '';
+	if(show_index != menu.supMenuId){
+        str = 'hidden';
+	}
+	return str;
+}
+
+/**
+ * 构造菜单节点数据
+ * @param treelist
+ * @returns {Array}
+ */
+function buildNodeDatas(treelist) {
+    var newTrees = new Array();
+    for (var i =0,len=treelist.length ;i<len;i++) {
+        var menu = treelist[i];
+        if (menu.menuLevel == 2) {// 二级菜单处理
+            var obj = {};
+            obj["menuId"] = menu.menuId;
+            obj["menuName"] = menu.menuName;
+            obj["supMenuId"] = menu.supMenuId;
+            obj["menuUrl"] = menu.menuUrl;
+            obj["menuSeq"] = menu.menuSeq;
+            obj["menuIcon"] = menu.menuIcon;
+            obj["children"] = getChildrenNode(menu.menuId, treelist);
+            newTrees.push(obj);
+        }
+    }
+    return newTrees;
+}
+
+/**
+ * 构造菜单子节点数据
+ * @param pId
+ * @param treesList
+ * @returns {Array}
+ */
+function getChildrenNode(pId, treesList) {
+    var newTrees = new Array();
+    for (var i =0,len=treesList.length ;i<len;i++) {
+        var cmenu = treesList[i];
+        if (cmenu.supMenuId == null) continue;
+        if (cmenu.supMenuId == pId) {
+            var cObj = {};
+            cObj["menuId"] = cmenu.menuId;
+            cObj["menuName"] = cmenu.menuName;
+            cObj["supMenuId"] = menu.supMenuId;
+            cObj["menuUrl"] = cmenu.menuUrl;
+            cObj["menuSeq"] = cmenu.menuSeq;
+            cObj["menuIcon"] = menu.menuIcon;
+            cObj["children"] = getChildrenNode(cmenu.menuId, treesList);
+            newTrees.push(cObj);
+        }
+    }
+    return newTrees;
+}
+
+/**
+ * 排序
+ * @param menus
+ */
+function sortByMenuSeq(menus) {
+    if (menus.length) {
+        menus.sort(function (a, b) {
+            return a.menuSeq - b.menuSeq
+        })
+        for (var i = 0,len=menus.length ; i < len; i++) {
+            if (menus[i].children && menus[i].children.length) {
+                sortByMenuSeq(menus[i].children)
+            }
+        }
+    }
+}
+
+
+// 动态效果初始化
+function cssInit() {
+    // 侧边栏操作按钮
+    $(document).on(click, '#guide', function() {
+        $(this).toggleClass('toggled');
+        $('#sidebar').toggleClass('toggled');
+    });
+    // 侧边栏二级菜单
+    $(document).on('click', '.sub-menu a', function() {
+        $(this).next().slideToggle(200);
+        $(this).parent().toggleClass('toggled');
+    });
+    // 个人资料
+    $(document).on('click', '.s-profile a', function() {
+        $(this).next().slideToggle(200);
+        $(this).parent().toggleClass('toggled');
+    });
+    // Waves初始化
+    Waves.displayEffect();
+    // 滚动条初始化
+    $('#sidebar').mCustomScrollbar({
+        theme: 'minimal-dark',
+        scrollInertia: 100,
+        axis: 'yx',
+        mouseWheel: {
+            enable: true,
+            axis: 'y',
+            preventDefault: true
+        }
+    });
+}
+
+// 菜单动态效果初始化
+function menuEventInit() {
+    // 切换系统
+    $('.switch-systems').click(function () {
+        var systemid = $(this).attr('systemid');
+        // var systemname = $(this).attr('systemname');
+        var systemtitle = $(this).attr('systemtitle');
+        $('.system_menus').hide(0, function () {
+            $('.system_' + systemid).show();
+        });
+        // $('body').attr("id", systemname);
+        $('#system_title').text(systemtitle);
+        $.cookie('ssm-systemid', systemid);
+        // $.cookie('ssm-systemname', systemname);
+        $.cookie('ssm-systemtitle', systemtitle);
+    });
+    // 显示cookie菜单
+    var systemid = $.cookie('ssm-systemid') || 1;
+    // var systemname = $.cookie('ssm-systemname') || 'base-module';
+    var systemtitle = $.cookie('ssm-systemtitle') || '系统管理';
+    $('.system_menus').hide(0, function () {
+        $('.system_' + systemid).show();
+    });
+    // $('body').attr('id', systemname);
+    $('#system_title').text(systemtitle);
+}
+
+
+
 // iframe高度自适应
 function changeFrameHeight(ifm) {
 	ifm.height = document.documentElement.clientHeight - 118;
@@ -268,7 +460,30 @@ function fullPage() {
 
 // 退出登录
 function sys_exit(){
-	// 清除session和token
-
-	window.location.href = 'login.html';
+	// 清除session
+    $.ajax({
+        url: $.ssm_utils.getRootURL() + '/ssm/userinfo/logout',
+        type: 'POST',
+        dataType: 'json',
+        data: {},
+        beforeSend: function() {
+        },
+        success: function(res){
+            var code = res.code;
+            var msg = res.msg;
+            if('002'==code){
+            	console.log(msg);
+			}
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+    // 清楚cookie
+    $.cookie('ssm-systemid',null);
+    $.cookie('ssm-systemtitle',null);
+    $.cookie('_username',null);
+    $.cookie('_distcode',null);
+    $.cookie('JSESSIONID',null);
+    window.parent.location.href = 'login.html';
 }

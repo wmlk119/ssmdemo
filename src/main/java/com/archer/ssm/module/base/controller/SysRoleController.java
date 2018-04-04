@@ -3,6 +3,7 @@ package com.archer.ssm.module.base.controller;
 import com.archer.ssm.module.base.pojo.BootstrapTableResult;
 import com.archer.ssm.module.base.pojo.ResultBody;
 import com.archer.ssm.module.base.pojo.SysRole;
+import com.archer.ssm.module.base.pojo.UserInfo;
 import com.archer.ssm.module.base.service.SysRoleService;
 import com.archer.ssm.utils.common.DateUtils;
 import com.archer.ssm.utils.common.UniqId;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,9 +41,16 @@ public class SysRoleController extends BaseController{
      */
     @RequestMapping(value = "/rolelist",method = RequestMethod.POST)
     @ResponseBody
-    public BootstrapTableResult<SysRole> getRoleList(String pageSize, String pageIndex, String roleName){
+    public BootstrapTableResult<SysRole> getRoleList(HttpServletRequest request, String pageSize, String pageIndex, String roleName){
         BootstrapTableResult<SysRole> res = new BootstrapTableResult<SysRole>();
         try {
+            // 登录验证
+            UserInfo user = getUserInfo(request);
+            if(null == user){
+                res.setCode("003");
+                res.setMsg("登录超时");
+                return res;
+            }
             if(StringUtils.isEmpty(pageSize) || StringUtils.isEmpty(pageIndex)){
                 res.setTotal(0);
                 res.setMsg("分页查询参数为空");
@@ -59,6 +68,7 @@ public class SysRoleController extends BaseController{
             }
             res.setRows(list);
             res.setTotal(count);
+            res.setCode("000");
             res.setMsg("查询角色成功");
         } catch (Exception e) {
             log.error("角色分页查询异常：",e);
@@ -76,23 +86,35 @@ public class SysRoleController extends BaseController{
      */
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     @ResponseBody
-    public ResultBody doAdd(String roleName, String roleDes){
+    public ResultBody doAdd(HttpServletRequest request, String roleName, String roleDes){
         ResultBody res = new ResultBody();
-        if(StringUtils.isEmpty(roleName)){
-            res.setCode("001");
-            res.setMsg("角色名不能为空");
-            return res;
+        try {
+            // 登录验证
+            UserInfo user = getUserInfo(request);
+            if(null == user){
+                res.setCode("003");
+                res.setMsg("登录超时");
+                return res;
+            }
+            if(StringUtils.isEmpty(roleName)){
+                res.setCode("001");
+                res.setMsg("角色名不能为空");
+                return res;
+            }
+            // 新增角色
+            SysRole entity = new SysRole();
+            entity.setRoleId(UniqId.getInstance().getWorkId().toString());
+            entity.setRoleName(roleName);
+            entity.setRoleDes(roleDes);
+            entity.setCreateTime(DateUtils.formatDateTime(new Date()));
+            sysRoleService.add(entity);
+            res.setCode("000");
+            res.setMsg("新增角色成功");
+        } catch (Exception e) {
+            log.error("新增角色异常：",e);
+            res.setCode("002");
+            res.setMsg("新增角色异常");
         }
-        // 新增角色
-        SysRole entity = new SysRole();
-        entity.setRoleId(UniqId.getInstance().getWorkId().toString());
-        entity.setRoleName(roleName);
-        entity.setRoleDes(roleDes);
-        entity.setCreateTime(DateUtils.formatDateTime(new Date()));
-        sysRoleService.add(entity);
-
-        res.setCode("000");
-        res.setMsg("新增角色成功");
         return res;
     }
 
@@ -103,9 +125,16 @@ public class SysRoleController extends BaseController{
      */
     @RequestMapping(value = "/list",method = RequestMethod.POST)
     @ResponseBody
-    public ResultBody getList(){
+    public ResultBody getList(HttpServletRequest request){
         ResultBody res = new ResultBody();
         try {
+            // 登录验证
+            UserInfo user = getUserInfo(request);
+            if(null == user){
+                res.setCode("003");
+                res.setMsg("登录超时");
+                return res;
+            }
             List<SysRole> list = sysRoleService.getList();
             res.setResult(list);
             res.setCode("000");

@@ -1,10 +1,7 @@
 package com.archer.ssm.module.base.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.archer.ssm.module.base.pojo.BootstrapTableResult;
-import com.archer.ssm.module.base.pojo.ResultBody;
-import com.archer.ssm.module.base.pojo.SysMenu;
-import com.archer.ssm.module.base.pojo.ZNode;
+import com.archer.ssm.module.base.pojo.*;
 import com.archer.ssm.module.base.service.SysMenuService;
 import com.archer.ssm.utils.common.DateUtils;
 import com.archer.ssm.utils.common.UniqId;
@@ -45,9 +42,16 @@ public class SysMenuController extends BaseController{
      */
     @RequestMapping(value = "/menulist",method = RequestMethod.POST)
     @ResponseBody
-    public BootstrapTableResult<SysMenu> getMenuList(String pageSize, String pageIndex,String menuName, String supMenuName,String menuLevel){
+    public BootstrapTableResult<SysMenu> getMenuList(HttpServletRequest request, String pageSize, String pageIndex,String menuName, String supMenuName,String menuLevel){
         BootstrapTableResult<SysMenu> res = new BootstrapTableResult<SysMenu>();
         try {
+            // 登录验证
+            UserInfo user = getUserInfo(request);
+            if(null == user){
+                res.setCode("003");
+                res.setMsg("登录超时");
+                return res;
+            }
             // 分页参数验证
             if(StringUtils.isEmpty(pageSize) || StringUtils.isEmpty(pageIndex)){
                 res.setTotal(0);
@@ -73,6 +77,7 @@ public class SysMenuController extends BaseController{
             }
             res.setRows(list);
             res.setTotal(count);
+            res.setCode("000");
             res.setMsg("查询菜单成功");
         } catch (Exception e) {
             log.error("查询菜单异常：",e);
@@ -89,9 +94,16 @@ public class SysMenuController extends BaseController{
      */
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     @ResponseBody
-    public ResultBody doAdd(SysMenu paraEntity){
+    public ResultBody doAdd(HttpServletRequest request, SysMenu paraEntity){
         ResultBody res = new ResultBody();
         try {
+            // 登录验证
+            UserInfo user = getUserInfo(request);
+            if(null == user){
+                res.setCode("003");
+                res.setMsg("登录超时");
+                return res;
+            }
             // 参数验证
             String menuName = paraEntity.getMenuName();
             Integer menuLevel = paraEntity.getMenuLevel();
@@ -136,9 +148,16 @@ public class SysMenuController extends BaseController{
      */
     @RequestMapping(value = "/supMenus",method = RequestMethod.POST)
     @ResponseBody
-    public ResultBody getSupMenus(String menuLevel){
+    public ResultBody getSupMenus(HttpServletRequest request,String menuLevel){
         ResultBody res = new ResultBody();
         try {
+            // 登录验证
+            UserInfo user = getUserInfo(request);
+            if(null == user){
+                res.setCode("003");
+                res.setMsg("登录超时");
+                return res;
+            }
             // 参数验证
             if(StringUtils.isEmpty(menuLevel)){
                 res.setCode("001");
@@ -165,9 +184,16 @@ public class SysMenuController extends BaseController{
      */
     @RequestMapping(value = "/znodes",method = RequestMethod.POST)
     @ResponseBody
-    public ResultBody getZNodes(String roleId){
+    public ResultBody getZNodes(HttpServletRequest request,String roleId){
         ResultBody res = new ResultBody();
         try {
+            // 登录验证
+            UserInfo user = getUserInfo(request);
+            if(null == user){
+                res.setCode("003");
+                res.setMsg("登录超时");
+                return res;
+            }
             // 参数验证
             if(StringUtils.isEmpty(roleId)){
                 res.setCode("001");
@@ -206,6 +232,13 @@ public class SysMenuController extends BaseController{
     public ResultBody doUpdate(HttpServletRequest request,SysMenu sysMenu){
         ResultBody res = new ResultBody();
         try {
+            // 登录验证
+            UserInfo user = getUserInfo(request);
+            if(null == user){
+                res.setCode("003");
+                res.setMsg("登录超时");
+                return res;
+            }
             // 验证参数
             if(StringUtils.isEmpty(sysMenu.getMenuId())){
                 res.setCode("001");

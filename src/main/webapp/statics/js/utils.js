@@ -64,6 +64,23 @@ $(function ($) {
             } else {
                 return false;
             }
+        },
+
+        /**
+         * 登录超时操作
+         */
+        timeoutAction: function () {
+            layer.confirm('登录超时，请重新登录', {
+                btn: ['确定'] //按钮
+            }, function(){
+                // 清楚cookie
+                $.cookie('ssm-systemid',null);
+                $.cookie('ssm-systemtitle',null);
+                $.cookie('_username',null);
+                $.cookie('_distcode',null);
+                $.cookie('JSESSIONID',null);
+                window.parent.location.href = 'login.html';
+            });
         }
 
 

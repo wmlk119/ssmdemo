@@ -3,6 +3,7 @@ package com.archer.ssm.module.base.controller;
 import com.alibaba.fastjson.JSON;
 import com.archer.ssm.module.base.pojo.MenuRoleRelation;
 import com.archer.ssm.module.base.pojo.ResultBody;
+import com.archer.ssm.module.base.pojo.UserInfo;
 import com.archer.ssm.module.base.service.MenuRoleRelationService;
 import com.archer.ssm.utils.common.DateUtils;
 import com.archer.ssm.utils.common.UniqId;
@@ -45,36 +46,50 @@ public class MenuRoleRelationController extends BaseController{
     @ResponseBody
     public ResultBody doUpdate(HttpServletRequest request,String addMenuIds,String delMenuIds,String roleId){
         ResultBody res = new ResultBody();
-        // 参数验证
-        if(StringUtils.isEmpty(roleId)||StringUtils.isEmpty(addMenuIds)||StringUtils.isEmpty(delMenuIds)){
-            res.setMsg("请求参数为空");
-            res.setCode("001");
-            return res;
+        try {
+            // 登录验证
+            UserInfo user = getUserInfo(request);
+            if(null == user){
+                res.setCode("003");
+                res.setMsg("登录超时");
+                return res;
+            }
+            // 参数验证
+            if(StringUtils.isEmpty(roleId)||StringUtils.isEmpty(addMenuIds)||StringUtils.isEmpty(delMenuIds)){
+                res.setMsg("请求参数为空");
+                res.setCode("001");
+                return res;
+            }
+            // JSON转换
+            List<String> addMenuIdList = JSON.parseArray(addMenuIds,String.class);
+            List<String> delMenuIdList = JSON.parseArray(delMenuIds,String.class);
+            // 构造新增菜单角色关联集合
+            List<MenuRoleRelation> menuRoleRelations = new ArrayList<MenuRoleRelation>();
+            if(!CollectionUtils.isEmpty(addMenuIdList)){
+                String createTime = DateUtils.formatDateTime(new Date());
+                addMenuIdList.stream().forEach(menuId ->{
+                    MenuRoleRelation relation = new MenuRoleRelation();
+                    relation.setRelationId(UniqId.getInstance().getWorkId().toString());
+                    relation.setRoleId(roleId);
+                    relation.setMenuId(menuId);
+                    relation.setCreateTime(createTime);
+                    menuRoleRelations.add(relation);
+                });
+            }
+            // 执行更新菜单分配操作
+            if(!menuRoleRelationService.doUpdate(menuRoleRelations,roleId,delMenuIdList)){
+                res.setMsg("更新菜单分配失败");
+                res.setCode("001");
+                return res;
+            }
+            res.setMsg("菜单分配成功");
+            res.setCode("000");
+        } catch (Exception e) {
+            log.error("菜单分配异常:",e);
+            res.setMsg("菜单分配异常");
+            res.setCode("002");
+            e.printStackTrace();
         }
-        // JSON转换
-        List<String> addMenuIdList = JSON.parseArray(addMenuIds,String.class);
-        List<String> delMenuIdList = JSON.parseArray(delMenuIds,String.class);
-        // 构造新增菜单角色关联集合
-        List<MenuRoleRelation> menuRoleRelations = new ArrayList<MenuRoleRelation>();
-        if(!CollectionUtils.isEmpty(addMenuIdList)){
-            String createTime = DateUtils.formatDateTime(new Date());
-            addMenuIdList.stream().forEach(menuId ->{
-                MenuRoleRelation relation = new MenuRoleRelation();
-                relation.setRelationId(UniqId.getInstance().getWorkId().toString());
-                relation.setRoleId(roleId);
-                relation.setMenuId(menuId);
-                relation.setCreateTime(createTime);
-                menuRoleRelations.add(relation);
-            });
-        }
-        // 执行更新菜单分配操作
-        if(!menuRoleRelationService.doUpdate(menuRoleRelations,roleId,delMenuIdList)){
-            res.setMsg("更新菜单分配失败");
-            res.setCode("001");
-            return res;
-        }
-        res.setMsg("菜单分配成功");
-        res.setCode("000");
         return res;
     }
 

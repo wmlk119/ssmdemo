@@ -37,7 +37,13 @@ $(function() {
             {field: 'action', title: '操作', halign: 'center', align: 'center', formatter: 'userlist_obj.actionFormatter', events: 'actionEvents', clickToSelect: false}
         ],
         onLoadSuccess: function(data){  //加载成功时执行
-            console.info("加载成功");
+            var code = data.code;
+            var msg = data.msg;
+            if('003'== code){
+                $.ssm_utils.timeoutAction();
+            }else if('000' != code){
+                layer.msg(msg);
+            }
         }
     }).on('all.bs.table', function (e, name, args) {
         $('[data-toggle="tooltip"]').tooltip();
@@ -176,6 +182,8 @@ userlist_obj.getRoles = function () {
                     });
                     $('#role_id').append(opt_tmp);
                 }
+            }else if('003' == code){
+                $.ssm_utils.timeoutAction();
             }else{
                 layer.msg(msg);
             }
@@ -217,6 +225,8 @@ userlist_obj.doAdd = function () {
                 $("#userinfo").hide();
                 $("#main").show();
                 userlist_obj.SearchData();
+            }else if('003' == code){
+                $.ssm_utils.timeoutAction();
             }else{
                 layer.msg(msg);
             }

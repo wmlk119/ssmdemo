@@ -3,7 +3,9 @@ package com.archer.ssm.module.base.controller;
 import com.alibaba.fastjson.JSON;
 import com.archer.ssm.module.base.pojo.BootstrapTableResult;
 import com.archer.ssm.module.base.pojo.ResultBody;
+import com.archer.ssm.module.base.pojo.SysMenu;
 import com.archer.ssm.module.base.pojo.UserInfo;
+import com.archer.ssm.module.base.service.SysMenuService;
 import com.archer.ssm.module.base.service.UserInfoService;
 import com.archer.ssm.utils.common.DateUtils;
 import com.archer.ssm.utils.common.PasswordHash;
@@ -22,9 +24,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Administrator
@@ -36,6 +37,9 @@ public class UserInfoController extends BaseController{
 
     @Autowired
     private UserInfoService userInfoService;
+    @Autowired
+    private SysMenuService sysMenuService;
+
 
     @RequestMapping(value = "/getById",method = RequestMethod.GET)
     @ResponseBody
@@ -139,8 +143,12 @@ public class UserInfoController extends BaseController{
         BootstrapTableResult<UserInfo> res = new BootstrapTableResult<UserInfo>();
         try {
             // 登录验证
-            UserInfo user = (UserInfo) request.getSession().getAttribute("sysUser");
-
+            UserInfo user = getUserInfo(request);
+            if(null == user){
+                res.setCode("003");
+                res.setMsg("登录超时");
+                return res;
+            }
             if(StringUtils.isEmpty(pageSize) || StringUtils.isEmpty(pageIndex)){
                 res.setTotal(0);
                 res.setMsg("分页查询参数为空");
@@ -165,6 +173,7 @@ public class UserInfoController extends BaseController{
             }
             res.setTotal(count);
             res.setRows(list);
+            res.setCode("000");
             res.setMsg("查询成功");
         } catch (Exception e) {
             log.error("用户分页查询异常：",e);
@@ -180,9 +189,16 @@ public class UserInfoController extends BaseController{
      */
     @RequestMapping(value = "/add",method = RequestMethod.POST)
     @ResponseBody
-    public ResultBody doAdd(UserInfo paraEntity){
+    public ResultBody doAdd(HttpServletRequest request, UserInfo paraEntity){
         ResultBody res = new ResultBody();
         try {
+            // 登录验证
+            UserInfo user = getUserInfo(request);
+            if(null == user){
+                res.setCode("003");
+                res.setMsg("登录超时");
+                return res;
+            }
             // 输入参数验证
             String loginName = paraEntity.getLoginName();
             String userName = paraEntity.getUserName();
@@ -221,8 +237,67 @@ public class UserInfoController extends BaseController{
         return res;
     }
 
+    /**
+     * 主页初始化
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/index",method = RequestMethod.POST)
+    @ResponseBody
+    public ResultBody indexInit(HttpServletRequest request){
+        ResultBody res = new ResultBody();
+        try {
+            // 获取用户信息
+            UserInfo user = getUserInfo(request);
+            if(null == user){
+                res.setCode("003");
+                res.setMsg("登录超时");
+                return res;
+            }
+            // 获取用户所属角色菜单集合
+            List<SysMenu> list = sysMenuService.getListByRoleId(user.getRoleId());
+            if(CollectionUtils.isEmpty(list)){
+                res.setCode("001");
+                res.setMsg("账户暂未分配权限，请联系管理员");
+                return res;
+            }
+            List<SysMenu> toplist = list.stream().filter(menu -> menu.getMenuLevel()==1)
+                    .sorted(Comparator.comparing(SysMenu::getMenuSeq)).collect(Collectors.toList());
+            List<SysMenu> leftlist = list.stream().filter(menu -> menu.getMenuLevel()>1).collect(Collectors.toList());
+            Map<String,Object> map = new HashMap<String,Object>();
+            map.put("top",toplist);
+            map.put("left",leftlist);
+            res.setResult(map);
+            res.setCode("000");
+            res.setMsg("初始化成功");
+        } catch (Exception e) {
+            log.error("主页初始化异常:",e);
+            res.setCode("002");
+            res.setMsg("初始化异常");
+        }
+        return res;
+    }
 
-
+    /**
+     * 退出登录
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/logout",method = RequestMethod.POST)
+    @ResponseBody
+    public ResultBody logOut(HttpServletRequest request){
+        ResultBody res = new ResultBody();
+        try {
+            request.getSession().removeAttribute("sysUser");
+            res.setCode("000");
+            res.setMsg("退出成功");
+        } catch (Exception e) {
+            res.setCode("002");
+            res.setMsg(e.getMessage());
+            log.error("退出登录:",e);
+        }
+        return res;
+    }
 
 
 }

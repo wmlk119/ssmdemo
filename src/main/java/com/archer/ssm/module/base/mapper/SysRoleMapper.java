@@ -7,13 +7,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SysRoleMapper {
+public interface SysRoleMapper extends BaseMapper<SysRole>{
 
     // 新增
-    public int add(SysRole entity);
+//    public int add(SysRole entity);
 
     // 获取角色集合
-    public List<SysRole> getList();
+//    public List<SysRole> getList();
 
     // 查询条数
     public int getCount(SysRole entity);
