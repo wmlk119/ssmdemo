@@ -19,4 +19,9 @@
         </foreach>
     </delete>
 
+    <!-- 根据角色ID删除 -->
+    <delete id="delByRoleId" parameterType="java.lang.String">
+        DELETE FROM menu_role_relation WHERE roleId=#{roleId}
+    </delete>
+
 </mapper>

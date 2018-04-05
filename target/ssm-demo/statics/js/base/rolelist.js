@@ -4,6 +4,7 @@
  */
 var rolelist_obj = {};
 rolelist_obj.$table = $('#table');
+rolelist_obj.prerole = {};
 // 角色包含菜单ID集合
 rolelist_obj.selMenus = [];
 $(function() {
@@ -77,6 +78,10 @@ $(function() {
     $('#cancelMenus').on('click',function (e) {
         rolelist_obj.cancelMenus();
     });
+    // 保存编辑角色
+    $('#doEditRole').on('click',function (e) {
+        rolelist_obj.doUpdate();
+    })
 
 });
 
@@ -110,12 +115,20 @@ rolelist_obj.menuConfigFormater = function(value, row, index){
 // 操作事件
 window.actionEvents = {
     'click .edit': function (e, value, row, index) {
-        alert('You click edit icon, row: ' + JSON.stringify(row));
-        console.log(value, row, index);
+        // alert('You click edit icon, row: ' + JSON.stringify(row));
+        // console.log(value, row, index);
+        rolelist_obj.goEditRole(row);
     },
     'click .remove': function (e, value, row, index) {
-        alert('You click remove icon, row: ' + JSON.stringify(row));
-        console.log(value, row, index);
+        // alert('You click remove icon, row: ' + JSON.stringify(row));
+        // console.log(value, row, index);
+        layer.confirm('确定要删除该角色？', {
+            btn: ['确定','取消']
+        }, function(){
+            // 删除角色
+            rolelist_obj.doDel(row.roleId);
+        }, function(){
+        });
     }
 };
 
@@ -183,21 +196,49 @@ rolelist_obj.SearchData = function () {
 
 // 转向新增界面
 rolelist_obj.createAction = function () {
+    // 初始化
+    $('#roleinfo_title').text('新增角色');
+    $('#role_name').val('');
+    $('#role_des').val('');
+    // 清除错误信息
+    $.ssm_utils.removeAllErrMsg();
+    $('#doAddRole').show();
+    $('#doEditRole').hide();
     $("#main").hide();
     $("#roleinfo").show();
 }
 
+// 转向编辑界面
+rolelist_obj.goEditRole = function (role) {
+    // 初始化
+    $('#roleId').val(role.roleId);
+    rolelist_obj.prerole.roleName = role.roleName;
+    rolelist_obj.prerole.roleDes = role.roleDes;
+    $('#roleinfo_title').text('编辑角色');
+    $('#role_name').val(role.roleName);
+    $('#role_des').val(role.roleDes);
+    // 清除错误信息
+    $.ssm_utils.removeAllErrMsg();
+    $('#doAddRole').hide();
+    $('#doEditRole').show();
+    $("#main").hide();
+    $("#roleinfo").show();
+}
+
+
 // 新增角色
 rolelist_obj.doAdd = function () {
     // 输入参数验证
-
+    if(!rolelist_obj.formCheck()){
+        return;
+    }
     // ajax访问后台
     $.ajax({
         url: $.ssm_utils.getRootURL() + '/ssm/sysrole/add',
         type: 'POST',
         dataType: 'json',
         data: {
-            roleName: $('#role_name').val().trim(),
+            roleName: $('#role_name').val().replace(/\s/g,''),
             roleDes: $('#role_des').val()
         },
         beforeSend: function() {
@@ -221,6 +262,82 @@ rolelist_obj.doAdd = function () {
         }
     });
 }
+
+// 保存编辑
+rolelist_obj.doUpdate = function () {
+    // 表单验证
+    if(!rolelist_obj.formCheck()){
+        return;
+    }
+    // 是否修改
+    var count = 0;
+    if(rolelist_obj.prerole.roleName != $('#role_name').val().replace(/\s/g,'')){
+        count++;
+    }
+    if(rolelist_obj.prerole.roleDes != $('#role_des').val()){
+        count++;
+    }
+    if(count == 0){
+        rolelist_obj.doCancel();
+        return;
+    }
+    // ajax提交更新
+    $.ajax({
+        url: $.ssm_utils.getRootURL() + '/ssm/sysrole/update',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            roleId: $('#roleId').val(),
+            roleName: $('#role_name').val().replace(/\s/g,''),
+            roleDes: $('#role_des').val()
+        },
+        beforeSend: function() {
+        },
+        success: function(res){
+            var code = res.code;
+            var msg = res.msg;
+            if(code && '000' == code){
+                layer.msg(msg);
+                $("#roleinfo").hide();
+                $("#main").show();
+                rolelist_obj.SearchData();
+            }else if('003' == code){
+                $.ssm_utils.timeoutAction();
+            }else{
+                layer.msg(msg);
+            }
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+}
+
+
+// 新增表单验证
+rolelist_obj.formCheck = function () {
+    // 角色名称
+    var role_name = $('#role_name').val().replace(/\s/g,'');
+    if(role_name == ''){
+        $.ssm_utils.addErrMsg($('#role_name'),'角色名不能为空');
+        return false;
+    }else if(role_name.length >= 50){
+        $.ssm_utils.addErrMsg($('#role_name'),'字符长度超出限制');
+        return false;
+    }else{
+        $.ssm_utils.removeErrMsg($('#role_name'));
+    }
+    // 角色描述
+    var role_des = $('#role_des').val();
+    if(role_des && role_des.length >= 255){
+        $.ssm_utils.addErrMsg($('#role_des'),'字符长度超出限制');
+        return false;
+    }else{
+        $.ssm_utils.removeErrMsg($('#role_des'));
+    }
+    return true;
+}
+
 
 // 取消新增角色
 rolelist_obj.doCancel = function () {
@@ -316,6 +433,39 @@ rolelist_obj.updateRoleMenus = function(addMenuIds,delMenuIds){
                 layer.msg(msg);
                 $('#main').show();
                 $('#menu_config_blk').hide();
+            }else if('003' == code){
+                $.ssm_utils.timeoutAction();
+            }else{
+                layer.msg(msg);
+            }
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+}
+
+/**
+ * 删除角色
+ * @param roleId
+ */
+rolelist_obj.doDel = function (roleId) {
+    // ajax提交
+    $.ajax({
+        url: $.ssm_utils.getRootURL() + '/ssm/sysrole/delete',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            roleId: roleId
+        },
+        beforeSend: function() {
+        },
+        success: function(res){
+            var code = res.code;
+            var msg = res.msg;
+            if(code && '000' == code){
+                layer.msg(msg);
+                rolelist_obj.SearchData();
             }else if('003' == code){
                 $.ssm_utils.timeoutAction();
             }else{

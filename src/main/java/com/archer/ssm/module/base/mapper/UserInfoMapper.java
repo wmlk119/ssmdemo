@@ -12,15 +12,6 @@ public interface UserInfoMapper extends BaseMapper<UserInfo>{
     // 根据ID查询
     public UserInfo getById(Long id);
 
-    // 新增
-//    public int add(UserInfo entity);
-
-    // 根据ID删除
-    public int deleteById(Long id);
-
-    // 修改
-//    public int update(UserInfo entity);
-
     // 查询条数
     public int getCount(UserInfo entity);
 

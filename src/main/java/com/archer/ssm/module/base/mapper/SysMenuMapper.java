@@ -10,9 +10,6 @@ import java.util.List;
 @Repository
 public interface SysMenuMapper extends BaseMapper<SysMenu>{
 
-    // 新增
-//    public int add(SysMenu entity);
-
     // 查询条数
     public int getCount(SysMenu entity);
 
@@ -22,8 +19,6 @@ public interface SysMenuMapper extends BaseMapper<SysMenu>{
     // 查询父级菜单
     public List<SysMenu> getSupMenus(int menuLevel);
 
-    // 查询菜单集合
-//    public List<SysMenu> getList();
 
     // 根据角色id获取ztree菜单集合
     public List<ZNode> getZNodes(String roleId);
@@ -31,7 +26,5 @@ public interface SysMenuMapper extends BaseMapper<SysMenu>{
     // 根据角色id查询菜单集合
     public List<SysMenu> getListByRoleId(String roleId);
 
-    // 更新
-//    public int update(SysMenu entity);
 
 }

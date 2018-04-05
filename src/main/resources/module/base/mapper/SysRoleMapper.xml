@@ -32,4 +32,23 @@
         ) AS a WHERE rownumber > #{pageIndex}
     </select>
 
+    <!-- 删除 -->
+    <delete id="delete" parameterType="java.lang.String">
+        DELETE FROM sys_role WHERE roleId = #{id}
+    </delete>
+
+    <!-- 修改 -->
+    <update id="update" parameterType="com.archer.ssm.module.base.pojo.SysRole">
+        UPDATE sys_role
+        <set>
+            <if test="roleName != null">
+                roleName = #{roleName},
+            </if>
+            <if test="roleDes != null">
+                roleDes = #{roleDes}
+            </if>
+        </set>
+        WHERE roleId = #{roleId}
+    </update>
+
 </mapper>

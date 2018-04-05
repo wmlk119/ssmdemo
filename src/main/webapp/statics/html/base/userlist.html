@@ -34,15 +34,16 @@
 </div>
 <!-- 新增 -->
 <div id="userinfo" class="col-xs-8" style="padding: 20px 10px 10px 50px;" hidden>
+	<input id="userId" type="hidden">
 	<div class="form-item blk-title" >
-		<span>新增用户</span>
+		<span id="userinfo_title">新增用户</span>
 	</div>
 	<div class="form-item">
 		<label class="form-label">登录名：</label>
 		<input id="login_name" class="input-search2" type="text" placeholder="请使用英文字母、数字和'_'，长度不超过32">
 		<span class="red">*</span>
 	</div>
-	<div class="form-item">
+	<div id="pwd_blk" class="form-item">
 		<label class="form-label">登录密码：</label>
 		<input class="input-search2" type="text" value="000000" disabled>
 	</div>
@@ -97,6 +98,7 @@
 	</div>
 	<div class="form-item2 col-xs-7" style="text-align: center;">
 		<button id="doAddUser" type="button" class="btn btn-info btn-sm btn-margin">新增</button>
+		<button id="doEditUser" type="button" class="btn btn-info btn-sm btn-margin" hidden>保存</button>
 		<button id="cancelAddUser" type="button" class="btn btn-default btn-sm btn-margin">取消</button>
 	</div>
 </div>

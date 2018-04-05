@@ -4,6 +4,7 @@
  */
 var userlist_obj = {};
 userlist_obj.$table = $('#table');
+userlist_obj.preuser = {}; //原用户信息
 $(function() {
     // bootstrap table初始化
     userlist_obj.$table.bootstrapTable({
@@ -64,6 +65,10 @@ $(function() {
     // 新增用户
     $("#doAddUser").on('click',function (e) {
         userlist_obj.doAdd();
+    });
+    // 更新用户
+    $("#doEditUser").on('click',function (e) {
+        userlist_obj.doUpdate();
     });
     // 取消新增
     $("#cancelAddUser").on('click',function (e) {
@@ -127,12 +132,20 @@ userlist_obj.actionFormatter = function (value, row, index) {
 
 window.actionEvents = {
     'click .edit': function (e, value, row, index) {
-        alert('You click edit icon, row: ' + JSON.stringify(row));
-        console.log(value, row, index);
+        // alert('You click edit icon, row: ' + JSON.stringify(row));
+        // console.log(value, row, index);
+        userlist_obj.goEditUser(row);
     },
     'click .remove': function (e, value, row, index) {
-        alert('You click remove icon, row: ' + JSON.stringify(row));
-        console.log(value, row, index);
+        // alert('You click remove icon, row: ' + JSON.stringify(row));
+        // console.log(value, row, index);
+        layer.confirm('确定要删除该用户？', {
+            btn: ['确定','取消']
+        }, function(){
+            // 删除用户
+            userlist_obj.doDel(row.userId);
+        }, function(){
+        });
     }
 };
 
@@ -146,12 +159,18 @@ userlist_obj.SearchData = function () {
 // 新增
 userlist_obj.createAction = function () {
     // 初始化
+    $('#userinfo_title').text('新增用户');
     $('#login_name').val('');
+    $('#login_name').removeAttr('disabled');
     $('#user_name').val('');
+    $('#pwd_blk').show();
     $('input[name="sex"]:eq(0)').prop('checked','checked');
     $('#phone_num').val('');
     $('#district_code').val(1);
+    $('#district_code').removeAttr('disabled');
     $('#remark').val('');
+    $('#doAddUser').show();
+    $('#doEditUser').hide();
     $("#main").hide();
     $("#userinfo").show();
     // 清楚所有错误信息
@@ -160,8 +179,55 @@ userlist_obj.createAction = function () {
     userlist_obj.getRoles();
 }
 
-// ajax 获取角色信息
-userlist_obj.getRoles = function () {
+// 转向编辑界面
+userlist_obj.goEditUser = function (obj) {
+    // 初始化
+    $('#userinfo_title').text('编辑用户');
+    $('#userId').val(obj.userId);
+    // 保存修改对象值
+    userlist_obj.preuser.userName = obj.userName;
+    userlist_obj.preuser.sex = obj.sex;
+    userlist_obj.preuser.phoneNum = obj.phoneNum;
+    userlist_obj.preuser.roleId = obj.roleId;
+    userlist_obj.preuser.remark = obj.remark;
+
+    // 登录名-disabled
+    $('#login_name').val(obj.loginName);
+    $('#login_name').attr('disabled','disabled');
+    // 隐藏密码
+    $('#pwd_blk').hide();
+    // 用户名
+    $('#user_name').val(obj.userName);
+    // 性别
+    if(1==obj.sex){ // 男
+        $('input[name="sex"]:eq(0)').prop('checked','checked');
+    }else{
+        $('input[name="sex"]:eq(1)').prop('checked','checked');
+    }
+    // 联系电话
+    $('#phone_num').val(obj.phoneNum);
+    // 所属区县-disabled
+    $('#district_code').val(obj.districtCode);
+    $('#district_code').attr('disabled','disabled');
+    // 加载角色信息
+    userlist_obj.getRoles(obj.roleId);
+    // 备注
+    $('#remark').val(obj.remark);
+    $('#doAddUser').hide();
+    $('#doEditUser').show();
+    $("#main").hide();
+    $("#userinfo").show();
+    // 清楚所有错误信息
+    $.ssm_utils.removeAllErrMsg();
+
+}
+
+
+/**
+ * 获取角色信息
+ * @param roleId
+ */
+userlist_obj.getRoles = function (roleId) {
     $.ajax({
         url: $.ssm_utils.getRootURL() + '/ssm/sysrole/list',
         type: 'POST',
@@ -181,6 +247,9 @@ userlist_obj.getRoles = function () {
                         opt_tmp += '<option value="'+obj.roleId+'">'+obj.roleName+'</option>'
                     });
                     $('#role_id').append(opt_tmp);
+                    if(roleId){
+                        $('#role_id').val(roleId);
+                    }
                 }
             }else if('003' == code){
                 $.ssm_utils.timeoutAction();
@@ -193,7 +262,6 @@ userlist_obj.getRoles = function () {
         }
     });
 }
-
 
 
 // 新增用户
@@ -237,6 +305,88 @@ userlist_obj.doAdd = function () {
     });
 }
 
+// 更新用户信息
+userlist_obj.doUpdate = function () {
+    // 信息验证
+    var check_res = userlist_obj.updateFormCheck();
+    var code = check_res.code;
+    // 验证失败
+    if(1 == code){
+        return;
+    }
+    // 未修改
+    if(2 == code){
+        userlist_obj.doCancel();
+    }
+    var params = check_res.params;
+    // ajax提交更新
+    $.ajax({
+        url: $.ssm_utils.getRootURL() + '/ssm/userinfo/update',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            userId: $('#userId').val(),
+            userName: params.userName,
+            sex: params.sex,
+            phoneNum: params.phoneNum,
+            roleId: params.roleId,
+            remark: params.remark
+        },
+        beforeSend: function() {
+        },
+        success: function(res){
+            var code = res.code;
+            var msg = res.msg;
+            if(code && '000' == code){
+                $("#userinfo").hide();
+                $("#main").show();
+                userlist_obj.SearchData();
+            }else if('003' == code){
+                $.ssm_utils.timeoutAction();
+            }else{
+                layer.msg(msg);
+            }
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+}
+
+/**
+ * 删除用户
+ * @param userId
+ */
+userlist_obj.doDel = function (userId) {
+    // ajax提交删除
+    $.ajax({
+        url: $.ssm_utils.getRootURL() + '/ssm/userinfo/delete',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            userId: userId
+        },
+        beforeSend: function() {
+        },
+        success: function(res){
+            var code = res.code;
+            var msg = res.msg;
+            if(code && '000' == code){
+                layer.msg(msg);
+                userlist_obj.SearchData();
+            }else if('003' == code){
+                $.ssm_utils.timeoutAction();
+            }else{
+                layer.msg(msg);
+            }
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+}
+
+
 // 新增用户表单验证
 userlist_obj.formCheck = function () {
     // 登录名验证
@@ -275,6 +425,77 @@ userlist_obj.formCheck = function () {
         $.ssm_utils.removeErrMsg($('#remark'));
     }
     return true;
+}
+
+/**
+ * 编辑用户表单验证
+ * @returns {*} code: 0=成功，1=失败，2=未修改
+ */
+userlist_obj.updateFormCheck = function () {
+    var count=0;
+    var res = {};
+    res.code = 0;
+    res.params = {};
+    // 用户名
+    var user_name = $('#user_name').val().replace(/\s/g,'');
+    if(user_name == ''){
+        $.ssm_utils.addErrMsg($('#user_name'),'用户名不能为空');
+        res.code = 1;
+        return res;
+    }else if(user_name.length >= 32){
+        $.ssm_utils.addErrMsg($('#user_name'),'用户名不超过32个字符');
+        res.code = 1;
+        return res;
+    }else{
+        $.ssm_utils.removeErrMsg($('#user_name'));
+    }
+    if(user_name != userlist_obj.preuser.userName){
+        count++;
+        res.params.userName = user_name;
+    }
+    // 性别
+    var sex = $('input[name="sex"]:checked').val();
+    if(sex != userlist_obj.preuser.sex){
+        count++;
+        res.params.sex = sex;
+    }
+    // 联系电话
+    var phone_num = $('#phone_num').val();
+    if(!$.ssm_utils.validatePhone(phone_num) && !$.ssm_utils.validateMobile(phone_num)){
+        $.ssm_utils.addErrMsg($('#phone_num'),'联系电话不符合要求');
+        res.code = 1;
+        return res;
+    }else{
+        $.ssm_utils.removeErrMsg($('#phone_num'));
+    }
+    if(phone_num != userlist_obj.preuser.phoneNum){
+        count++;
+        res.params.phoneNum = phone_num;
+    }
+    // 角色
+    var role_id = $('#role_id').val();
+    if(role_id != userlist_obj.preuser.roleId){
+        count++;
+        res.params.roleId = role_id;
+    }
+        // 备注
+    var remark = $('#remark').val();
+    if(remark && remark.length >= 255){
+        $.ssm_utils.addErrMsg($('#remark'),'备注长度不超过255个字符');
+        res.code = 1;
+        return res;
+    }else{
+        $.ssm_utils.removeErrMsg($('#remark'));
+    }
+    if(remark != userlist_obj.preuser.remark){
+        count++;
+        res.params.remark = remark;
+    }
+    if(0 == count){
+        res.code = 2;
+        return res;
+    }
+    return res;
 }
 
 

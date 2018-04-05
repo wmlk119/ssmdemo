@@ -13,7 +13,7 @@ public interface UserInfoService {
     public int add(UserInfo entity);
 
     // 根据ID删除
-    public int deleteById(Long id);
+    public int delete(String id);
 
     // 修改
     public int update(UserInfo entity);

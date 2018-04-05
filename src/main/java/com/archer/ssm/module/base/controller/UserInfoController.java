@@ -163,6 +163,10 @@ public class UserInfoController extends BaseController{
             int count = userInfoService.getCount(paraEntity);
             if(count > 0){
                 list = userInfoService.getPageList(Integer.parseInt(pageSize),Integer.parseInt(pageIndex),paraEntity);
+                list.stream().forEach(userInfo -> {
+                    userInfo.setLoginPwd("");
+                    userInfo.setPwdSalt("");
+                });
             }
             res.setTotal(count);
             res.setRows(list);
@@ -222,6 +226,71 @@ public class UserInfoController extends BaseController{
         }
         return res;
     }
+
+    /**
+     * 更新用户信息
+     * @param paraEntity
+     * @return
+     */
+    @RequestMapping(value = "/update",method = RequestMethod.POST)
+    @ResponseBody
+    public ResultBody doUpdate(UserInfo paraEntity){
+        ResultBody res = new ResultBody();
+
+        try {
+            // 参数验证
+            if(StringUtils.isEmpty(paraEntity.getUserId())){
+                res.setCode("001");
+                res.setMsg("用户ID为空");
+                return res;
+            }
+            // 用户信息验证
+            if(StringUtils.isEmpty(paraEntity.getUserName()) && null==paraEntity.getSex() && StringUtils.isEmpty(paraEntity.getPhoneNum())
+                        && StringUtils.isEmpty(paraEntity.getRoleId()) && StringUtils.isEmpty(paraEntity.getRemark())){
+                res.setCode("001");
+                res.setMsg("无变更用户信息");
+                return res;
+            }
+            // 更新用户信息
+            userInfoService.update(paraEntity);
+            res.setCode("000");
+            res.setMsg("更新用户信息成功");
+        } catch (Exception e) {
+            log.error("更新用户信息异常：",e);
+            res.setCode("002");
+            res.setMsg("更新用户信息异常");
+        }
+        return res;
+    }
+
+    /**
+     * 删除用户
+     * @param userId
+     * @return
+     */
+    @RequestMapping(value = "/delete",method = RequestMethod.POST)
+    @ResponseBody
+    public ResultBody doDelete(String userId){
+        ResultBody res = new ResultBody();
+        try {
+            // 参数验证
+            if(StringUtils.isEmpty(userId)){
+                res.setCode("001");
+                res.setMsg("用户ID为空");
+                return res;
+            }
+            // 删除用户
+            userInfoService.delete(userId);
+            res.setCode("000");
+            res.setMsg("删除用户成功");
+        } catch (Exception e) {
+            log.error("删除用户异常：",e);
+            res.setCode("002");
+            res.setMsg("删除用户异常");
+        }
+        return res;
+    }
+
 
     /**
      * 主页初始化

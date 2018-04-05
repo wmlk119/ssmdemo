@@ -24,6 +24,12 @@ public interface MenuRoleRelationMapper {
      */
     public int batchDel(@Param("roleId") String roleId, @Param("menuIds") List<String> menuIds);
 
+    /**
+     * 根据角色ID删除
+     * @param roleId
+     * @return
+     */
+    public int delByRoleId(String roleId);
 
 
 }

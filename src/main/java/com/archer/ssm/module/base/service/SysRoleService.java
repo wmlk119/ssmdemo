@@ -9,6 +9,12 @@ public interface SysRoleService {
     // 新增
     public int add(SysRole entity);
 
+    // 删除
+    public int delete(String roleId);
+
+    // 修改
+    public int update(SysRole entity);
+
     // 获取角色集合
     public List<SysRole> getList();
 

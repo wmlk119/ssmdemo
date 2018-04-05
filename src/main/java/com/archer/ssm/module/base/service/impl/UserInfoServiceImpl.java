@@ -31,8 +31,8 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     // 根据ID删除
     @Override
-    public int deleteById(Long id) {
-        return userInfoMapper.deleteById(id);
+    public int delete(String id) {
+        return userInfoMapper.delete(id);
     }
 
     // 修改

@@ -126,5 +126,63 @@ public class SysRoleController extends BaseController{
         return res;
     }
 
+    /**
+     * 更新角色信息
+     * @param paraEntity
+     * @return
+     */
+    @RequestMapping(value = "/update",method = RequestMethod.POST)
+    @ResponseBody
+    public ResultBody doUpdate(SysRole paraEntity){
+        ResultBody res = new ResultBody();
+        try {
+            // 参数验证
+            if(StringUtils.isEmpty(paraEntity.getRoleId())|| StringUtils.isEmpty(paraEntity.getRoleName())){
+                res.setCode("001");
+                res.setMsg("角色参数为空");
+                return res;
+            }
+            sysRoleService.update(paraEntity);
+            res.setCode("000");
+            res.setMsg("更新角色成功");
+        } catch (Exception e) {
+            log.error("更新角色异常：",e);
+            res.setCode("002");
+            res.setMsg("更新角色异常");
+        }
+        return res;
+    }
+
+
+    /**
+     * 删除角色
+     * @param roleId
+     * @return
+     */
+    @RequestMapping(value = "/delete",method = RequestMethod.POST)
+    @ResponseBody
+    public ResultBody doDelete(String roleId){
+        ResultBody res = new ResultBody();
+
+        try {
+            // 参数验证
+            if(StringUtils.isEmpty(roleId)){
+                res.setCode("001");
+                res.setMsg("角色ID为空");
+                return res;
+            }
+            // 根据角色ID删除
+            sysRoleService.delete(roleId);
+            res.setCode("000");
+            res.setMsg("删除角色成功");
+        } catch (Exception e) {
+            log.error("删除角色异常：",e);
+            res.setCode("002");
+            res.setMsg("删除角色异常");
+        }
+        return res;
+    }
+
+
 
 }
