@@ -9,6 +9,7 @@ import java.io.Serializable;
  * @create 2018-03-30 14:15
  */
 public class ZNode implements Serializable {
+    private static final long serialVersionUID = 5404783808778096844L;
     // id
     private String id;
     // 父级id

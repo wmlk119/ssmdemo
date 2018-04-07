@@ -1,6 +1,5 @@
 /**
  * 角色管理
- * @type {*|jQuery|HTMLElement}
  */
 var rolelist_obj = {};
 rolelist_obj.$table = $('#table');

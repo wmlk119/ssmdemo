@@ -1,9 +1,12 @@
 package com.archer.ssm.module.base.service.impl;
 
+import com.archer.ssm.module.base.mapper.MenuRoleRelationMapper;
 import com.archer.ssm.module.base.mapper.SysMenuMapper;
 import com.archer.ssm.module.base.pojo.SysMenu;
 import com.archer.ssm.module.base.pojo.ZNode;
 import com.archer.ssm.module.base.service.SysMenuService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +20,13 @@ import java.util.List;
  */
 @Service
 public class SysMenuServiceImpl implements SysMenuService {
+    public static final Logger log = LoggerFactory.getLogger(SysMenuServiceImpl.class);
+
     @Autowired
     private SysMenuMapper sysMenuMapper;
+    @Autowired
+    private MenuRoleRelationMapper menuRoleRelationMapper;
+
 
     @Override
     public int add(SysMenu entity) {
@@ -64,5 +72,27 @@ public class SysMenuServiceImpl implements SysMenuService {
     @Override
     public int update(SysMenu entity) {
         return sysMenuMapper.update(entity);
+    }
+
+    // 删除
+    @Override
+    public int delete(String menuId) {
+        int res = 1;
+        try {
+            // 删除菜单
+            sysMenuMapper.delete(menuId);
+            // 删除菜单角色表
+            menuRoleRelationMapper.delByMenuId(menuId);
+        } catch (Exception e) {
+            log.error("删除菜单异常：",e);
+            res = -1;
+        }
+        return res;
+    }
+
+    // 根据菜单ID查询子集菜单
+    @Override
+    public List<SysMenu> getListBySupMenuId(String supMenuId) {
+        return sysMenuMapper.getListBySupMenuId(supMenuId);
     }
 }

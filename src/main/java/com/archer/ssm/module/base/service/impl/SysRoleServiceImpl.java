@@ -66,4 +66,9 @@ public class SysRoleServiceImpl implements SysRoleService {
     public List<SysRole> getPageList(int pageSize, int pageIndex, SysRole entity) {
         return sysRoleMapper.getPageList(pageSize,pageIndex,entity);
     }
+
+    @Override
+    public SysRole get(String roleId) {
+        return sysRoleMapper.get(roleId);
+    }
 }

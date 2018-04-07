@@ -9,6 +9,7 @@ import java.io.Serializable;
  * @create 2018-03-23 10:29
  */
 public class SysMenu extends BaseEntity implements Serializable{
+    private static final long serialVersionUID = -2911041613236437163L;
     // ID
     private String menuId;
     // 菜单级别

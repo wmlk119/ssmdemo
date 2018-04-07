@@ -4,7 +4,7 @@ $(function() {
     getSysUserInfo();
 
 	// 初始信息加载
-	var username = $.cookie("_username");
+	var username = window.parent.$.cookie("_username");
 	if(username){
 		$("#user_name").text(username);
 	}
@@ -65,8 +65,8 @@ function sysMenuBuild(toplist,leftlist) {
 		}
         var firstMenu = toplist[0];
         // 保存cookie[ssm-systemid, ssm-systemtitle]
-        $.cookie("ssm-systemid",firstMenu.menuId);
-        $.cookie("ssm-systemtitle",firstMenu.menuName);
+        window.parent.$.cookie("ssm-systemid",firstMenu.menuId);
+        window.parent.$.cookie("ssm-systemtitle",firstMenu.menuName);
 	}
     $('#top_menu').append(menu_str+li_str);
 
@@ -236,14 +236,14 @@ function menuEventInit() {
         });
         // $('body').attr("id", systemname);
         $('#system_title').text(systemtitle);
-        $.cookie('ssm-systemid', systemid);
+        window.parent.$.cookie('ssm-systemid', systemid);
         // $.cookie('ssm-systemname', systemname);
-        $.cookie('ssm-systemtitle', systemtitle);
+        window.parent.$.cookie('ssm-systemtitle', systemtitle);
     });
     // 显示cookie菜单
-    var systemid = $.cookie('ssm-systemid') || 1;
+    var systemid = window.parent.$.cookie('ssm-systemid') || 1;
     // var systemname = $.cookie('ssm-systemname') || 'base-module';
-    var systemtitle = $.cookie('ssm-systemtitle') || '系统管理';
+    var systemtitle = window.parent.$.cookie('ssm-systemtitle') || '系统管理';
     $('.system_menus').hide(0, function () {
         $('.system_' + systemid).show();
     });
@@ -480,10 +480,11 @@ function sys_exit(){
         }
     });
     // 清楚cookie
-    $.cookie('ssm-systemid',null);
-    $.cookie('ssm-systemtitle',null);
-    $.cookie('_username',null);
-    $.cookie('_distcode',null);
-    $.cookie('JSESSIONID',null);
+    window.parent.$.cookie('ssm-systemid','');
+    window.parent.$.cookie('ssm-systemtitle','');
+    window.parent.$.cookie("_userid",'');
+    window.parent.$.cookie('_username','');
+    window.parent.$.cookie('_distcode','');
+    window.parent.$.cookie('JSESSIONID','');
     window.parent.location.href = 'login.html';
 }

@@ -10,6 +10,7 @@ import java.util.List;
  * @create 2018-03-22 10:16
  */
 public class BootstrapTableResult<T> implements Serializable{
+    private static final long serialVersionUID = 1513544066052655954L;
     // 总数
     private Integer total;
     // 分页查询结果集

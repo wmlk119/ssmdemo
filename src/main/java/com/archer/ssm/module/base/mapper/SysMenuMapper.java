@@ -26,5 +26,8 @@ public interface SysMenuMapper extends BaseMapper<SysMenu>{
     // 根据角色id查询菜单集合
     public List<SysMenu> getListByRoleId(String roleId);
 
+    // 根据菜单ID查询子集菜单
+    public List<SysMenu> getListBySupMenuId(String supMenuId);
+
 
 }

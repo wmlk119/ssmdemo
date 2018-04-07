@@ -31,4 +31,11 @@ public interface SysMenuService {
     // 更新
     public int update(SysMenu entity);
 
+    // 删除
+    public int delete(String menuId);
+
+    // 根据菜单ID查询子集菜单
+    public List<SysMenu> getListBySupMenuId(String supMenuId);
+
+
 }

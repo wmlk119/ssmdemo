@@ -46,8 +46,9 @@ function login() {
 			var msg = res.msg;
 			if(code && '000' == code){
 				var user = res.result;
-				$.cookie("_username",user.userName);
-				$.cookie("_distcode",user.districtCode);
+                window.parent.$.cookie("_userid",user.userId);
+                window.parent.$.cookie("_username",user.userName);
+                window.parent.$.cookie("_distcode",user.districtCode);
                 window.location.href = 'index.html';
 			}else{
 				layer.msg(msg);

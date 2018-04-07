@@ -23,6 +23,11 @@ public class UserInfoServiceImpl implements UserInfoService {
         return userInfoMapper.getById(id);
     }
 
+    @Override
+    public UserInfo get(String userId) {
+        return userInfoMapper.get(userId);
+    }
+
     // 新增
     @Override
     public int add(UserInfo entity) {

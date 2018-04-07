@@ -31,5 +31,11 @@ public interface MenuRoleRelationMapper {
      */
     public int delByRoleId(String roleId);
 
+    /**
+     * 根据菜单ID删除
+     * @param menuId
+     * @return
+     */
+    public int delByMenuId(String menuId);
 
 }

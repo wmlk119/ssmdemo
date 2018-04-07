@@ -1,11 +1,9 @@
 package com.archer.ssm.module.base.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.archer.ssm.module.base.pojo.BootstrapTableResult;
-import com.archer.ssm.module.base.pojo.ResultBody;
-import com.archer.ssm.module.base.pojo.SysMenu;
-import com.archer.ssm.module.base.pojo.UserInfo;
+import com.archer.ssm.module.base.pojo.*;
 import com.archer.ssm.module.base.service.SysMenuService;
+import com.archer.ssm.module.base.service.SysRoleService;
 import com.archer.ssm.module.base.service.UserInfoService;
 import com.archer.ssm.utils.common.DateUtils;
 import com.archer.ssm.utils.common.PasswordHash;
@@ -39,6 +37,8 @@ public class UserInfoController extends BaseController{
     private UserInfoService userInfoService;
     @Autowired
     private SysMenuService sysMenuService;
+    @Autowired
+    private SysRoleService sysRoleService;
 
 
     @RequestMapping(value = "/getById",method = RequestMethod.GET)
@@ -112,6 +112,7 @@ public class UserInfoController extends BaseController{
                 return res;
             }
             UserInfo userInfo = new UserInfo();
+            userInfo.setUserId(entity.getUserId());
             userInfo.setUserName(entity.getUserName());
             userInfo.setDistrictCode(entity.getDistrictCode());
             // 保存session
@@ -350,6 +351,143 @@ public class UserInfoController extends BaseController{
             res.setCode("002");
             res.setMsg(e.getMessage());
             log.error("退出登录:",e);
+        }
+        return res;
+    }
+
+    /**
+     * 个人信息初始化
+     * @param userId
+     * @return
+     */
+    @RequestMapping(value = "/initInfo",method = RequestMethod.POST)
+    @ResponseBody
+    public ResultBody initInfo(String userId){
+        ResultBody res = new ResultBody();
+        try {
+            // 参数验证
+            if(StringUtils.isEmpty(userId)){
+                res.setCode("001");
+                res.setMsg("用户ID为空");
+                return res;
+            }
+            // 根据ID获取账户信息
+            UserInfo userInfo = userInfoService.get(userId);
+            if(null == userInfo){
+                res.setCode("001");
+                res.setMsg("用户不存在");
+                return res;
+            }
+            // 获取角色信息
+            SysRole role = sysRoleService.get(userInfo.getRoleId());
+            // 重构用户信息
+            UserInfo entity = new UserInfo();
+            entity.setUserId(userId);
+            entity.setLoginName(userInfo.getLoginName());
+            entity.setUserName(userInfo.getUserName());
+            entity.setSex(userInfo.getSex());
+            entity.setPhoneNum(userInfo.getPhoneNum());
+            entity.setDistrictCode(userInfo.getDistrictCode());
+            if(null!=role){
+                entity.setBakParam1(role.getRoleName());
+            }
+            entity.setRemark(userInfo.getRemark());
+            res.setResult(entity);
+            res.setCode("000");
+            res.setMsg("初始化个人信息成功");
+        } catch (Exception e) {
+            res.setMsg("个人信息初始化异常");
+            res.setCode("002");
+            log.error("个人信息初始化异常：",e);
+        }
+        return res;
+    }
+
+    /**
+     * 个人信息更新
+     * @param userInfo
+     * @return
+     */
+    @RequestMapping(value = "/updateinfo",method = RequestMethod.POST)
+    @ResponseBody
+    public ResultBody doUpdateInfo(UserInfo userInfo){
+        ResultBody res = new ResultBody();
+
+        try {
+            // 参数验证
+            if(StringUtils.isEmpty(userInfo.getUserId())){
+                res.setCode("001");
+                res.setMsg("用户ID为空");
+                return res;
+            }
+            // 用户信息验证
+            if(StringUtils.isEmpty(userInfo.getUserName()) && null==userInfo.getSex() && StringUtils.isEmpty(userInfo.getPhoneNum())
+                    && StringUtils.isEmpty(userInfo.getRemark())){
+                res.setCode("001");
+                res.setMsg("无变更用户信息");
+                return res;
+            }
+            UserInfo entity = new UserInfo();
+            entity.setUserId(userInfo.getUserId());
+            entity.setUserName(userInfo.getUserName());
+            entity.setSex(userInfo.getSex());
+            entity.setPhoneNum(userInfo.getPhoneNum());
+            entity.setRemark(userInfo.getRemark());
+            // 更新用户信息
+            userInfoService.update(entity);
+            res.setCode("000");
+            res.setMsg("个人信息更细成功");
+        } catch (Exception e) {
+            log.error("个人信息更新异常：",e);
+            res.setCode("002");
+            res.setMsg("个人信息更新异常");
+        }
+        return res;
+    }
+
+    /**
+     * 修改用户密码
+     * @param userId
+     * @param oldPwd
+     * @param newPwd
+     * @return
+     */
+    @RequestMapping(value = "/updatepwd",method = RequestMethod.POST)
+    @ResponseBody
+    public ResultBody doUpdatePwd(HttpServletRequest request,String userId, String oldPwd, String newPwd){
+        ResultBody res = new ResultBody();
+        try {
+            // 参数验证
+            if(StringUtils.isEmpty(userId) || StringUtils.isEmpty(oldPwd) || StringUtils.isEmpty(newPwd)){
+                res.setCode("001");
+                res.setMsg("参数为空");
+                return res;
+            }
+            // 验证用户老密码
+            UserInfo userInfo = userInfoService.get(userId);
+            if(null == userInfo){
+                res.setCode("001");
+                res.setMsg("用户信息为空");
+                return res;
+            }
+            if(!PasswordUtil.verify(oldPwd,userInfo.getPwdSalt(),userInfo.getLoginPwd())){
+                res.setCode("001");
+                res.setMsg("原密码不正确");
+                return res;
+            }
+            // 更新密码
+            PasswordHash passwordHash = PasswordUtil.encrypt(newPwd);
+            UserInfo entity = new UserInfo();
+            entity.setUserId(userInfo.getUserId());
+            entity.setLoginPwd(passwordHash.getHexEncoded());
+            entity.setPwdSalt(passwordHash.getSalt());
+            userInfoService.update(entity);
+            // 清除session
+            request.getSession().removeAttribute("sysUser");
+            res.setMsg("密码修改成功，请重新登陆");
+            res.setCode("000");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return res;
     }

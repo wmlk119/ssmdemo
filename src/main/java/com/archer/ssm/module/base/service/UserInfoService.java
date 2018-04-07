@@ -9,6 +9,9 @@ public interface UserInfoService {
     // 根据ID查询
     public UserInfo getById(Long id);
 
+    // 查询
+    public UserInfo get(String userId);
+
     // 新增
     public int add(UserInfo entity);
 

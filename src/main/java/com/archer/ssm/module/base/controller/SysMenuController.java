@@ -222,5 +222,39 @@ public class SysMenuController extends BaseController{
         return res;
     }
 
+    /**
+     * 删除菜单
+     * @param menuId
+     * @return
+     */
+    @RequestMapping(value = "/delete",method = RequestMethod.POST)
+    @ResponseBody
+    public ResultBody doDelete(String menuId){
+        ResultBody res = new ResultBody();
+        try {
+            // 验证参数
+            if(StringUtils.isEmpty(menuId)){
+                res.setCode("001");
+                res.setMsg("菜单ID为空");
+                return res;
+            }
+            // 验证是否存在子集菜单
+            List<SysMenu> childMenuList = sysMenuService.getListBySupMenuId(menuId);
+            if(!CollectionUtils.isEmpty(childMenuList)){
+                res.setCode("001");
+                res.setMsg("请先删除该菜单的子集菜单");
+                return res;
+            }
+            // 删除菜单
+            sysMenuService.delete(menuId);
+            res.setCode("000");
+            res.setMsg("删除菜单为空");
+        } catch (Exception e) {
+            log.error("删除菜单异常：",e);
+            res.setCode("002");
+            res.setMsg("删除菜单异常");
+        }
+        return res;
+    }
 
 }

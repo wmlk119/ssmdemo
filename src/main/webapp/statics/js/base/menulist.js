@@ -1,6 +1,5 @@
 /**
  * 菜单管理
- * @type {*|jQuery|HTMLElement}
  */
 var menulist_obj = {};
 menulist_obj.$table = $('#table');
@@ -111,8 +110,15 @@ window.actionEvents = {
         menulist_obj.goEditMenu(row);
     },
     'click .remove': function (e, value, row, index) {
-        alert('You click remove icon, row: ' + JSON.stringify(row));
-        console.log(value, row, index);
+        // alert('You click remove icon, row: ' + JSON.stringify(row));
+        // console.log(value, row, index);
+        layer.confirm('确定要删除该菜单？', {
+            btn: ['确定','取消']
+        }, function(){
+            // 删除角色
+            menulist_obj.doDel(row.menuId);
+        }, function(){
+        });
     }
 };
 
@@ -392,6 +398,39 @@ menulist_obj.getSupMenus = function(level){
                     layer.msg("父级菜单为空");
                 }
             }else if('003'== code){
+                $.ssm_utils.timeoutAction();
+            }else{
+                layer.msg(msg);
+            }
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+}
+
+/**
+ * 删除菜单
+ * @param menuId
+ */
+menulist_obj.doDel = function (menuId) {
+    // ajax提交
+    $.ajax({
+        url: $.ssm_utils.getRootURL() + '/ssm/sysmenu/delete',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            menuId: menuId
+        },
+        beforeSend: function() {
+        },
+        success: function(res){
+            var code = res.code;
+            var msg = res.msg;
+            if(code && '000' == code){
+                layer.msg(msg);
+                menulist_obj.SearchData();
+            }else if('003' == code){
                 $.ssm_utils.timeoutAction();
             }else{
                 layer.msg(msg);

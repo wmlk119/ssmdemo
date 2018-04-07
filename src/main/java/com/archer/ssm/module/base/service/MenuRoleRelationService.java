@@ -29,4 +29,11 @@ public interface MenuRoleRelationService {
      */
     public Boolean doUpdate(List<MenuRoleRelation> relationList,String roleId,List<String> delMenuIdList);
 
+    /**
+     * 根据菜单ID删除
+     * @param menuId
+     * @return
+     */
+    public int delByMenuId(String menuId);
+
 }

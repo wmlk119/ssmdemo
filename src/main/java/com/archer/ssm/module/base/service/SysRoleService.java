@@ -24,4 +24,7 @@ public interface SysRoleService {
     // 分页条件查询
     public List<SysRole> getPageList(int pageSize, int pageIndex, SysRole entity);
 
+    // 根据ID查询
+    public SysRole get(String roleId);
+
 }

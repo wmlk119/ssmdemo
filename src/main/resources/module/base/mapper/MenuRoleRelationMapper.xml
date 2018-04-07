@@ -24,4 +24,9 @@
         DELETE FROM menu_role_relation WHERE roleId=#{roleId}
     </delete>
 
+    <!-- 根据菜单ID删除 -->
+    <delete id="delByMenuId" parameterType="java.lang.String">
+        DELETE FROM menu_role_relation WHERE menuId=#{menuId}
+    </delete>
+
 </mapper>

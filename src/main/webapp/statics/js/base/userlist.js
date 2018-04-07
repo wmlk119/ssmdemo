@@ -1,6 +1,5 @@
 /**
  * 用户管理
- * @type {*|jQuery|HTMLElement}
  */
 var userlist_obj = {};
 userlist_obj.$table = $('#table');

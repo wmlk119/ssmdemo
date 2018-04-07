@@ -53,4 +53,9 @@ public class MenuRoleRelationServiceImpl implements MenuRoleRelationService {
         }
         return res;
     }
+
+    @Override
+    public int delByMenuId(String menuId) {
+        return menuRoleRelationMapper.delByMenuId(menuId);
+    }
 }

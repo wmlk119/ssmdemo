@@ -7,6 +7,11 @@
         SELECT * FROM user_info WHERE userId = #{id}
     </select>
 
+    <!-- 根据ID查询 -->
+    <select id="get" parameterType="java.lang.String" resultType="com.archer.ssm.module.base.pojo.UserInfo">
+        SELECT * FROM user_info WHERE userId = #{id}
+    </select>
+
     <!-- 新增 -->
     <insert id="add" parameterType="com.archer.ssm.module.base.pojo.UserInfo">
         INSERT INTO user_info (userId,loginName,loginPwd,pwdSalt,userName,sex,phoneNum,districtCode,roleId,isEnable,createTime,remark)
@@ -22,6 +27,12 @@
     <update id="update" parameterType="com.archer.ssm.module.base.pojo.UserInfo">
         UPDATE user_info
         <set>
+            <if test="loginPwd != null">
+                loginPwd = #{loginPwd},
+            </if>
+            <if test="pwdSalt != null">
+                pwdSalt = #{pwdSalt},
+            </if>
             <if test="userName != null">
                 userName = #{userName},
             </if>

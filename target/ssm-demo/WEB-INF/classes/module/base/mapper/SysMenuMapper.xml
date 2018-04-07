@@ -82,4 +82,15 @@
         WHERE menuId = #{menuId}
     </update>
 
+    <!-- 根据菜单ID查询子集菜单 -->
+    <select id="getListBySupMenuId" parameterType="java.lang.String" resultType="com.archer.ssm.module.base.pojo.SysMenu">
+        SELECT * FROM sys_menu WHERE supMenuId = #{supMenuId}
+    </select>
+
+    <!-- 删除 -->
+    <delete id="delete" parameterType="java.lang.String">
+        DELETE FROM sys_menu WHERE menuId = #{id}
+    </delete>
+
+
 </mapper>

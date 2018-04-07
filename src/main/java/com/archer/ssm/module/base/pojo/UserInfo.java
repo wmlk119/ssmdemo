@@ -9,6 +9,7 @@ import java.io.Serializable;
  * @create 2018-03-16 17:06
  */
 public class UserInfo extends BaseEntity implements Serializable{
+    private static final long serialVersionUID = 2102662732922932189L;
     // 用户ID
     private String userId;
     // 登录名

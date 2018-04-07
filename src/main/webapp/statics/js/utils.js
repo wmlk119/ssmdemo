@@ -23,6 +23,7 @@ $(function ($) {
          * @param errMsg
          */
         addErrMsg: function (obj,errMsg) {
+            $.ssm_utils.removeErrMsg(obj);
             $(obj).parent().append("<span id='errMsg' name='errMsg' class='red'>"+errMsg+"</span>");
         },
 
@@ -74,13 +75,44 @@ $(function ($) {
                 btn: ['确定'] //按钮
             }, function(){
                 // 清楚cookie
-                $.cookie('ssm-systemid',null);
-                $.cookie('ssm-systemtitle',null);
-                $.cookie('_username',null);
-                $.cookie('_distcode',null);
-                $.cookie('JSESSIONID',null);
+                window.parent.$.cookie('ssm-systemid','');
+                window.parent.$.cookie('ssm-systemtitle','');
+                window.parent.$.cookie("_userid",'');
+                window.parent.$.cookie('_username','');
+                window.parent.$.cookie('_distcode','');
+                window.parent.$.cookie('JSESSIONID','');
                 window.parent.location.href = 'login.html';
             });
+        },
+
+        /**
+         * 区域代码转中文
+         * @param code
+         * @returns {string}
+         */
+        districtCode2Name: function (code) {
+            var name = '';
+            switch (code){
+                case 1:
+                    name = '市区';break;
+                case 2:
+                    name = '铜山区';break;
+                case 3:
+                    name = '贾汪区';break;
+                case 4:
+                    name = '丰县';break;
+                case 5:
+                    name = '沛县';break;
+                case 6:
+                    name = '睢宁县';break;
+                case 7:
+                    name = '邳州市';break;
+                case 8:
+                    name = '新沂市';break;
+                default:
+                    name = '匹配失败';break;
+            }
+            return name;
         }
 
 

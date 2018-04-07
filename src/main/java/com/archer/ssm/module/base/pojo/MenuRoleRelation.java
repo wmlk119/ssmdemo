@@ -9,6 +9,7 @@ import java.io.Serializable;
  * @create 2018-03-30 11:33
  */
 public class MenuRoleRelation extends BaseEntity implements Serializable {
+    private static final long serialVersionUID = 8138322528198172220L;
     // 关联id
     private String relationId;
     // 角色id

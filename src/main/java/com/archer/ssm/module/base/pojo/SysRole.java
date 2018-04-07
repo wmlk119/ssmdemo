@@ -9,6 +9,7 @@ import java.io.Serializable;
  * @create 2018-03-23 10:36
  */
 public class SysRole extends BaseEntity implements Serializable{
+    private static final long serialVersionUID = 7110505153518776096L;
     // 角色ID
     private String roleId;
     // 角色名称
