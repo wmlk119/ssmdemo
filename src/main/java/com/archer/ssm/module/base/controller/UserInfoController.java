@@ -1,7 +1,7 @@
 package com.archer.ssm.module.base.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.archer.ssm.module.base.pojo.*;
+import com.archer.ssm.module.base.service.LoginLogService;
 import com.archer.ssm.module.base.service.SysMenuService;
 import com.archer.ssm.module.base.service.SysRoleService;
 import com.archer.ssm.module.base.service.UserInfoService;
@@ -11,18 +11,19 @@ import com.archer.ssm.utils.common.PasswordUtil;
 import com.archer.ssm.utils.common.UniqId;
 import com.archer.ssm.utils.dataSource.DataSourceContextHolder;
 import com.archer.ssm.utils.dataSource.DataSourceType;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +40,8 @@ public class UserInfoController extends BaseController{
     private SysMenuService sysMenuService;
     @Autowired
     private SysRoleService sysRoleService;
+    @Autowired
+    private LoginLogService loginLogService;
 
 
     @RequestMapping(value = "/getById",method = RequestMethod.GET)
@@ -111,6 +114,17 @@ public class UserInfoController extends BaseController{
                 res.setMsg("用户名或密码错误");
                 return res;
             }
+            // 保存登录信息
+            // 本机：0:0:0:0:0:0:0:1，127.0.0.1，192.168.*.*
+            String ipaddress = getIpAddr(request);
+            ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+            cachedThreadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    loginLogService.add(ipaddress,entity);
+                }
+            });
+
             UserInfo userInfo = new UserInfo();
             userInfo.setUserId(entity.getUserId());
             userInfo.setUserName(entity.getUserName());

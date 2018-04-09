@@ -16,8 +16,8 @@ import java.io.PrintWriter;
  * @author Administrator
  * @since 2018-4-4 14:38:01
  */
-public class AuthInterceptor implements HandlerInterceptor {
-    public static final Logger log = LoggerFactory.getLogger(AuthInterceptor.class);
+public class AuthInterceptor extends BaseInterceptor implements HandlerInterceptor{
+//    public static final Logger log = LoggerFactory.getLogger(AuthInterceptor.class);
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
@@ -45,32 +45,6 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     }
 
-    /**
-     * 返回前台数据
-     * @param response
-     * @param data
-     */
-    public void WriteData(HttpServletResponse response, String data) {
-        PrintWriter pw = null;
-        try {
-            response.setContentType("application/json; charset=utf-8");
-            pw = response.getWriter();
-            pw.print(data);
-        } catch (Exception e) {
-            log.error("返回前台数据异常：",e);
-            try {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
-            if (pw != null) {
-                pw.print("");
-            }
-        } finally {
-            if (null != pw) {
-                pw.close();
-            }
-        }
-    }
+
 
 }

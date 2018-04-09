@@ -25,6 +25,10 @@
             <mvc:exclude-mapping path="/ssm/userinfo/logout"/>
             <bean class="com.archer.ssm.module.base.interceptor.AuthInterceptor"></bean>
         </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/ssm/userinfo/login"/>
+            <bean class="com.archer.ssm.module.base.interceptor.LoginInterceptor"></bean>
+        </mvc:interceptor>
     </mvc:interceptors>
 
     <bean id="defaultViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">

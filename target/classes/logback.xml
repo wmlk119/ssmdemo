@@ -1,20 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="LOG_HOME" value="D:/logs/ssmdemo/" />
+    <!--<property name="LOG_HOME" value="D:/logs/ssmdemo/" />-->
+    <property name="warn_dir" value="D:/logs/ssmdemo/warn/" />
+    <property name="err_dir" value="D:/logs/ssmdemo/error/" />
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
+        <!--<layout class="ch.qos.logback.classic.PatternLayout">-->
+            <!--<Pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] &#45;&#45; [%p] &#45;&#45; [%thread >>>> %F:%L >>>> Method = %M] &#45;&#45; [Content = %m]%n</Pattern>-->
+        <!--</layout>-->
+        <encoder>
             <Pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] -- [%p] -- [%thread >>>> %F:%L >>>> Method = %M] -- [Content = %m]%n</Pattern>
-        </layout>
+        </encoder>
     </appender>
 
-    <appender name="FILE"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <!--<appender name="FILE"  class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+            <!--<FileNamePattern>${LOG_HOME}/%d{yyyy-MM-dd}.log</FileNamePattern>-->
+            <!--<MaxHistory>30</MaxHistory>-->
+        <!--</rollingPolicy>-->
+        <!--<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
+            <!--<pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] &#45;&#45; [%p] &#45;&#45; [%thread >>>> %F:%L >>>> Method = %M] &#45;&#45; [Content = %m]%n</pattern>-->
+        <!--</encoder>-->
+        <!--<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">-->
+            <!--<MaxFileSize>10MB</MaxFileSize>-->
+        <!--</triggeringPolicy>-->
+    <!--</appender>-->
+
+    <!-- warn日志 -->
+    <appender name="warnFile"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>warn</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${LOG_HOME}/%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>${warn_dir}/%d{yyyy-MM-dd}.log</FileNamePattern>
             <MaxHistory>30</MaxHistory>
         </rollingPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] -- [%p] -- [%thread >>>> %F:%L >>>> Method = %M] -- [Content = %m]%n</pattern>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] -- [%p] -- [%F:%L >> Method = %M] -- [Content = %m]%n</pattern>
+        </encoder>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>10MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <!-- error日志 -->
+    <appender name="errorFile"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>error</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${err_dir}/%d{yyyy-MM-dd}.log</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] -- [%p] -- [%F:%L >> Method = %M] -- [Content = %m]%n</pattern>
         </encoder>
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <MaxFileSize>10MB</MaxFileSize>
@@ -22,6 +65,11 @@
     </appender>
 
     <!--级别：ALL > TRACE > DEBUG > INFO > WARN > ERROR-->
+    <logger name="com.archer.ssm" level="DEBUG">
+        <appender-ref ref="warnFile" />
+        <appender-ref ref="errorFile" />
+    </logger>
+
     <logger name="com.archer" level="DEBUG"/>
     <logger name="com.apache.ibatis" level="DEBUG"/>
     <logger name="java.sql.Connection" level="DEBUG"/>
@@ -30,7 +78,7 @@
 
     <root level="DEBUG">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
+        <!--<appender-ref ref="FILE" />-->
     </root>
 
 </configuration>

@@ -3,7 +3,6 @@ package com.archer.ssm.module.base.controller;
 import com.alibaba.fastjson.JSON;
 import com.archer.ssm.module.base.pojo.MenuRoleRelation;
 import com.archer.ssm.module.base.pojo.ResultBody;
-import com.archer.ssm.module.base.pojo.UserInfo;
 import com.archer.ssm.module.base.service.MenuRoleRelationService;
 import com.archer.ssm.utils.common.DateUtils;
 import com.archer.ssm.utils.common.UniqId;
