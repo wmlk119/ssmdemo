@@ -9,7 +9,7 @@
   <url>http://maven.apache.org</url>
 
   <properties>
-    <spring.version>4.1.2.RELEASE</spring.version>
+    <spring.version>4.3.10.RELEASE</spring.version>
     <mybatis.version>3.2.6</mybatis.version>
     <mybatis-spring.version>1.2.2</mybatis-spring.version>
     <aspectjweaver.version>1.7.2</aspectjweaver.version>
@@ -26,12 +26,12 @@
     <commons-io.version>2.4</commons-io.version>
     <commons-lang3.version>3.3.2</commons-lang3.version>
 
-    <jackson-databind.version>2.4.2</jackson-databind.version>
+    <jackson-databind.version>2.8.8</jackson-databind.version>
 
     <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
     <maven-war-plugin.version>2.3</maven-war-plugin.version>
 
-    <jdk.version>1.7</jdk.version>
+    <jdk.version>1.8</jdk.version>
     <shiro.version>1.3.2</shiro.version>
   </properties>
 
@@ -153,12 +153,12 @@
       <scope>provided</scope>
     </dependency>
     <!-- java ee jar 包 -->
-    <dependency>
-      <groupId>javax</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>${javaee-api.version}</version>
-      <scope>provided</scope>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>javax</groupId>-->
+      <!--<artifactId>javaee-api</artifactId>-->
+      <!--<version>${javaee-api.version}</version>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
 
     <!--logback start-->
     <dependency>
@@ -235,6 +235,36 @@
       <version>4.5.2</version>
     </dependency>
 
+    <!-- redis -->
+    <dependency>
+      <groupId>org.springframework.data</groupId>
+      <artifactId>spring-data-redis</artifactId>
+      <version>1.8.4.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>redis.clients</groupId>
+      <artifactId>jedis</artifactId>
+      <version>2.9.0</version>
+    </dependency>
+
+    <!-- hibernate验证 -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>5.2.4.Final</version>
+    </dependency>
+
+    <!-- 邮件发送 -->
+    <dependency>
+      <groupId>javax.mail</groupId>
+      <artifactId>javax.mail-api</artifactId>
+      <version>1.5.3</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>javax.mail</artifactId>
+      <version>1.5.3</version>
+    </dependency>
 
     <!-- 单元测试 -->
     <dependency>
